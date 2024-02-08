@@ -1,6 +1,6 @@
 #!/bin/bash
 
-python collect_data.py --label "white_background" \
+python collect_data.py --label "black_background" \
 --save_dir "data" \
 --rectangle_width 640 \
 --rectangle_height 790 \
