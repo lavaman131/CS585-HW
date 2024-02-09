@@ -5,12 +5,10 @@ import numpy as np
 def adjust_gamma(image: np.ndarray, gamma: float = 1.0) -> np.ndarray:
     # build a lookup table mapping the pixel values [0, 255] to
     # their adjusted gamma values
-    invGamma = 1.0 / gamma
-    table = np.array(
-        [((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)]
-    ).astype("uint8")
-    # apply gamma correction using the lookup table
-    return cv2.LUT(image, table)
+    lookUpTable = np.empty((1, 256), np.uint8)
+    for i in range(256):
+        lookUpTable[0, i] = np.clip(pow(i / 255.0, gamma) * 255.0, 0, 255)
+    return cv2.LUT(image, lookUpTable)
 
 
 def gamma_binary_image_conversion(

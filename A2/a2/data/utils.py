@@ -4,6 +4,7 @@ from a2.data.preprocessing import (
     color_model_binary_image_conversion,
     adjust_gamma,
 )
+import numpy as np
 
 global LINE_THICKNESS
 
@@ -63,6 +64,8 @@ def save_frames(
     save_dir: str,
     rectangle_width: int = 640,
     rectangle_height: int = 790,
+    gamma: float = 0.375,
+    camera_id: int = 0,
     width: int = 640,
     height: int = 480,
     fps: int = 30,
@@ -76,6 +79,8 @@ def save_frames(
     :param save_dir: Directory where frames will be saved.
     :param rectangle_width: Width of the rectangle to capture frames from.
     :param rectangle_height: Height of the rectangle to capture frames from.
+    :param gamma: Gamma value for adjusting the brightness of the captured frames.
+    :param camera_id: ID of the camera to capture frames from.
     :param width: Width of the captured frames.
     :param height: Height of the captured frames.
     :param fps: Frames per second for video capture.
@@ -87,7 +92,7 @@ def save_frames(
     save_path = Path(f"{save_dir}/{label}")
     save_path.mkdir(parents=True, exist_ok=True)
 
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(camera_id)
     cv2.resizeWindow("Window", width, height)
 
     print("Starting video capture in 3 seconds...")
@@ -121,8 +126,23 @@ def save_frames(
                     top_left[0] + LINE_THICKNESS : bottom_right[0] - LINE_THICKNESS,
                 ]
 
-                adjusted_image = adjust_gamma(region_of_interest, 0.9)
+                adjusted_image = region_of_interest.copy()
+
+                # sharpen kernel
+                kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
+                adjusted_image = cv2.filter2D(adjusted_image, -1, kernel)
+
+                adjusted_image = adjust_gamma(adjusted_image, gamma)
                 binary_image = color_model_binary_image_conversion(adjusted_image)
+                cnts = cv2.findContours(
+                    binary_image.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+                )
+                # find the largest contour in the mask
+                c = max(cnts[0], key=cv2.contourArea)
+                # draw a shape around the contour
+                cv2.drawContours(
+                    region_of_interest, [c], -1, (0, 255, 0), LINE_THICKNESS
+                )
 
                 # save without rectangle
                 cv2.imwrite(
