@@ -1,4 +1,10 @@
-from a2.data.utils import capture_video
+from a2.data.utils import predict
+import fire
+
+
+def main():
+    fire.Fire(predict)
+
 
 if __name__ == "__main__":
-    capture_video(width=640, height=480)
+    main()

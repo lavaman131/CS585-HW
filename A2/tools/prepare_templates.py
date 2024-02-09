@@ -1,5 +1,6 @@
 import cv2
-from a2.data.preprocessing import color_model_binary_image_conversion
+from a2.algorithms.segmentation import segment_image
+import numpy as np
 from argparse import ArgumentParser
 from pathlib import Path
 import pandas as pd
@@ -25,6 +26,12 @@ def main():
         required=True,
         help="Directory where template images will be saved.",
     )
+    parser.add_argument(
+        "--gamma",
+        type=float,
+        default=0.375,
+        help="Gamma value for adjusting the brightness of the captured frames.",
+    )
 
     args = parser.parse_args()
 
@@ -37,7 +44,9 @@ def main():
 
     for _, row in image_metadata.iterrows():
         image = cv2.imread(str(template_images_dir.joinpath(row.image_name)))
-        binary_image = color_model_binary_image_conversion(image)
+        c = segment_image(image, args.gamma)
+        binary_image = np.zeros(image.shape[:2], dtype=np.uint8)
+        cv2.fillPoly(binary_image, [c], (255, 255, 255))
         cv2.imwrite(str(save_dir.joinpath(row.image_name)), binary_image)
 
     image_metadata.to_csv(save_dir.joinpath("labels.csv"), index=False)

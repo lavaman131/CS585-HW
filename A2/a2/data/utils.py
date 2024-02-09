@@ -1,7 +1,7 @@
 import cv2
 import pandas as pd
 from pathlib import Path
-from A2.a2.algorithms.classification import template_match_classify
+from a2.algorithms.classification import template_match_classify
 from a2.algorithms.segmentation import segment_image
 from a2.data.preprocessing import color_model_binary_image_conversion
 
@@ -10,55 +10,7 @@ global LINE_THICKNESS
 LINE_THICKNESS = 3
 
 
-# def capture_video(
-#     rectangle_width: int = 640,
-#     rectangle_height: int = 790,
-#     width: int = 640,
-#     height: int = 480,
-# ) -> None:
-#     """
-#     Captures video from the camera and displays it in a window. Press 'q' to quit.
-#     :param width: The width of the window
-#     :param height: The height of the window
-#     :return: None
-#     """
-#     cap = cv2.VideoCapture(0)
-#     cv2.resizeWindow("Window", width, height)
-#     if not cap.isOpened():
-#         print("Cannot open camera")
-#         exit()
-#     while True:
-#         # Capture frame-by-frame
-#         ret, frame = cap.read()
-#         # if frame is read correctly ret is True
-#         if not ret:
-#             print("Can't receive frame (stream end?). Exiting ...")
-#             break
-#         # Our operations on the frame come here
-#         cv2.flip(frame, 1, frame)
-#         frame_height, frame_width = frame.shape[:2]
-#         center = (frame_width // 2, frame_height // 2)
-#         offset_x = rectangle_width // 2
-#         offset_y = rectangle_height // 2
-#         top_left = (center[0] - offset_x, center[1] - offset_y)
-#         bottom_right = (center[0] + offset_x, center[1] + offset_y)
-#         cv2.rectangle(frame, top_left, bottom_right, (0, 255, 0), 3)
-#         # only look at frame within the rectangle
-#         region_of_interest = frame[
-#             top_left[1] : bottom_right[1], top_left[0] : bottom_right[0]
-#         ]
-#         # Convert frame to binary image
-#         binary_image = rgb_to_binary_image(region_of_interest)
-
-#         # Display the resulting frame
-#         cv2.imshow("frame", frame)
-#         if cv2.waitKey(1) == ord("q"):
-#             break
-#     cap.release()
-#     cv2.destroyAllWindows()
-
-
-def save_segmented_frames(
+def predict(
     save_dir: str,
     labels_file: str,
     template_images_dir: str,
@@ -73,7 +25,7 @@ def save_segmented_frames(
     start_delay_seconds: int = 3,
 ) -> None:
     """
-    Captures video frames and saves them as binary images.
+    Captures video frames and saves binary and RGB images of the region of interest along with the predicted label.
     :param labels_file: Path to the template image labels .csv file.
     :param save_dir: Directory where frames will be saved.
     :param template_images_dir: Directory containing the binary template images.
@@ -134,11 +86,21 @@ def save_segmented_frames(
                 pred = template_match_classify(
                     binary_image, template_images_dir, image_metadata
                 )
-                print(pred)
+                cv2.putText(
+                    region_of_interest,
+                    f"Predicted label: {str(pred)}",
+                    (50, 50),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    1,
+                    (255, 255, 255),
+                    2,
+                    cv2.LINE_AA,
+                )
 
                 cv2.drawContours(
                     region_of_interest, [c], -1, (0, 255, 0), LINE_THICKNESS
                 )
+                cv2.fillPoly(binary_image, [c], (255, 255, 255))
                 # save without rectangle
                 cv2.imwrite(
                     str(save_path / f"frame_{image_number}_rgb.png"), region_of_interest
