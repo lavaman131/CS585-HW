@@ -1,10 +1,8 @@
 import cv2
 from pathlib import Path
-from a2.data.preprocessing import (
-    color_model_binary_image_conversion,
-    adjust_gamma,
-)
+from a2.algorithms.segmentation import segment_image
 import numpy as np
+from a2.data.preprocessing import adjust_gamma, color_model_binary_image_conversion
 
 global LINE_THICKNESS
 
@@ -132,12 +130,8 @@ def save_segmented_frames(
 
                 adjusted_image = adjust_gamma(adjusted_image, gamma)
                 binary_image = color_model_binary_image_conversion(adjusted_image)
-                cnts = cv2.findContours(
-                    binary_image.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
-                )
-                # find the largest contour in the mask
-                c = max(cnts[0], key=cv2.contourArea)
-                # draw a shape around the contour
+
+                c = segment_image(binary_image)
                 cv2.drawContours(
                     region_of_interest, [c], -1, (0, 255, 0), LINE_THICKNESS
                 )
@@ -163,15 +157,3 @@ def save_segmented_frames(
         # Ensure resources are released even in case of an error
         cap.release()
         cv2.destroyAllWindows()
-
-
-def binarize_template_images(image: np.ndarray) -> np.ndarray:
-    """
-    Preprocesses template image as binary images.
-
-    :param image: The image to preprocess.
-    :return: The preprocessed image.
-    """
-    # convert to grayscale
-    binary_image = color_model_binary_image_conversion(image)
-    return binary_image

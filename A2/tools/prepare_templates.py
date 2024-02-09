@@ -1,5 +1,5 @@
 import cv2
-from a2.data.utils import binarize_template_images
+from a2.data.preprocessing import color_model_binary_image_conversion
 from argparse import ArgumentParser
 from pathlib import Path
 import pandas as pd
@@ -37,7 +37,7 @@ def main():
 
     for _, row in image_metadata.iterrows():
         image = cv2.imread(str(template_images_dir.joinpath(row.image_name)))
-        binary_image = binarize_template_images(image)
+        binary_image = color_model_binary_image_conversion(image)
         cv2.imwrite(str(save_dir.joinpath(f"{row.label}.png")), binary_image)
 
 

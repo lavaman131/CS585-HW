@@ -2,27 +2,6 @@ import cv2
 import numpy as np
 
 
-def adjust_gamma(image: np.ndarray, gamma: float = 1.0) -> np.ndarray:
-    # build a lookup table mapping the pixel values [0, 255] to
-    # their adjusted gamma values
-    lookUpTable = np.empty((1, 256), np.uint8)
-    for i in range(256):
-        lookUpTable[0, i] = np.clip(pow(i / 255.0, gamma) * 255.0, 0, 255)
-    return cv2.LUT(image, lookUpTable)
-
-
-def gamma_binary_image_conversion(
-    image: np.ndarray, thresh: int, gamma: float = 1.0
-) -> np.ndarray:
-    # adjust gamma
-    adjusted_image = adjust_gamma(image, gamma)
-    # extract red channel
-    red_channel = adjusted_image[..., 2]
-    # convert to binary image
-    binary_image = cv2.threshold(red_channel, thresh, 255, cv2.THRESH_BINARY)[1]
-    return binary_image
-
-
 def color_model_binary_image_conversion(image: np.ndarray) -> np.ndarray:
     # formulas from: https://arxiv.org/pdf/1708.02694.pdf
     B = image[:, :, 0]
@@ -74,7 +53,10 @@ def color_model_binary_image_conversion(image: np.ndarray) -> np.ndarray:
     return mask.astype(np.uint8) * 255
 
 
-# TODO: implement the following functions
-# use template matching to recognize hand shapes
-# use background subtraction to detect motion
-# detect bounding boxes using horizontal and vertical projections
+def adjust_gamma(image: np.ndarray, gamma: float = 1.0) -> np.ndarray:
+    # build a lookup table mapping the pixel values [0, 255] to
+    # their adjusted gamma values
+    lookUpTable = np.empty((1, 256), np.uint8)
+    for i in range(256):
+        lookUpTable[0, i] = np.clip(pow(i / 255.0, gamma) * 255.0, 0, 255)
+    return cv2.LUT(image, lookUpTable)
