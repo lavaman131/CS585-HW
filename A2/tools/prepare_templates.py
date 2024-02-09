@@ -38,7 +38,9 @@ def main():
     for _, row in image_metadata.iterrows():
         image = cv2.imread(str(template_images_dir.joinpath(row.image_name)))
         binary_image = color_model_binary_image_conversion(image)
-        cv2.imwrite(str(save_dir.joinpath(f"{row.label}.png")), binary_image)
+        cv2.imwrite(str(save_dir.joinpath(row.image_name)), binary_image)
+
+    image_metadata.to_csv(save_dir.joinpath("labels.csv"), index=False)
 
 
 if __name__ == "__main__":

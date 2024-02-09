@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 
-def template_match(image: np.ndarray, template: np.ndarray) -> np.ndarray:
+def template_match(image: np.ndarray, binary_templates: np.ndarray) -> np.ndarray:
     """
     Uses template matching to recognize hand shapes.
 
@@ -10,4 +10,5 @@ def template_match(image: np.ndarray, template: np.ndarray) -> np.ndarray:
     :param template: The template to match.
     :return: The match.
     """
-    return cv2.matchTemplate(image, template, cv2.TM_CCOEFF_NORMED)
+    # score all templates in the image
+    result = cv2.matchTemplate(image, template, cv2.TM_CCOEFF_NORMED)
