@@ -1,5 +1,7 @@
 import cv2
+import pandas as pd
 from pathlib import Path
+from A2.a2.algorithms.classification import template_match_classify
 from a2.algorithms.segmentation import segment_image
 from a2.data.preprocessing import color_model_binary_image_conversion
 
@@ -58,6 +60,8 @@ LINE_THICKNESS = 3
 
 def save_segmented_frames(
     save_dir: str,
+    labels_file: str,
+    template_images_dir: str,
     rectangle_width: int = 640,
     rectangle_height: int = 790,
     gamma: float = 0.375,
@@ -70,8 +74,9 @@ def save_segmented_frames(
 ) -> None:
     """
     Captures video frames and saves them as binary images.
-
+    :param labels_file: Path to the template image labels .csv file.
     :param save_dir: Directory where frames will be saved.
+    :param template_images_dir: Directory containing the binary template images.
     :param rectangle_width: Width of the rectangle to capture frames from.
     :param rectangle_height: Height of the rectangle to capture frames from.
     :param gamma: Gamma value for adjusting the brightness of the captured frames.
@@ -86,6 +91,8 @@ def save_segmented_frames(
     """
     save_path = Path(save_dir)
     save_path.mkdir(parents=True, exist_ok=True)
+
+    image_metadata = pd.read_csv(labels_file)
 
     cap = cv2.VideoCapture(camera_id)
     cv2.resizeWindow("Window", width, height)
@@ -123,6 +130,11 @@ def save_segmented_frames(
                 cropped_image = region_of_interest.copy()
                 binary_image = color_model_binary_image_conversion(cropped_image)
                 c = segment_image(cropped_image, gamma)
+
+                pred = template_match_classify(
+                    binary_image, template_images_dir, image_metadata
+                )
+                print(pred)
 
                 cv2.drawContours(
                     region_of_interest, [c], -1, (0, 255, 0), LINE_THICKNESS
