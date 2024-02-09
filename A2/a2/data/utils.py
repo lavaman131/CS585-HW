@@ -60,7 +60,6 @@ LINE_THICKNESS = 3
 
 
 def save_segmented_frames(
-    label: str,
     save_dir: str,
     rectangle_width: int = 640,
     rectangle_height: int = 790,
@@ -75,7 +74,6 @@ def save_segmented_frames(
     """
     Captures video frames and saves them as binary images.
 
-    :param label: A label for the saved frames.
     :param save_dir: Directory where frames will be saved.
     :param rectangle_width: Width of the rectangle to capture frames from.
     :param rectangle_height: Height of the rectangle to capture frames from.
@@ -89,7 +87,7 @@ def save_segmented_frames(
     :param binary_threshold: Threshold for converting frames to binary images.
     :return: None
     """
-    save_path = Path(f"{save_dir}/{label}")
+    save_path = Path(save_dir)
     save_path.mkdir(parents=True, exist_ok=True)
 
     cap = cv2.VideoCapture(camera_id)
@@ -165,3 +163,15 @@ def save_segmented_frames(
         # Ensure resources are released even in case of an error
         cap.release()
         cv2.destroyAllWindows()
+
+
+def binarize_template_images(image: np.ndarray) -> np.ndarray:
+    """
+    Preprocesses template image as binary images.
+
+    :param image: The image to preprocess.
+    :return: The preprocessed image.
+    """
+    # convert to grayscale
+    binary_image = color_model_binary_image_conversion(image)
+    return binary_image
