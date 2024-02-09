@@ -59,7 +59,7 @@ LINE_THICKNESS = 3
 #     cv2.destroyAllWindows()
 
 
-def save_frames(
+def save_segmented_frames(
     label: str,
     save_dir: str,
     rectangle_width: int = 640,

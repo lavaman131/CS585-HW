@@ -1,6 +1,6 @@
 #!/bin/bash
 
-python collect_data.py --label "demo" \
+python save_segmented_frames.py --label "demo" \
 --save_dir "data" \
 --rectangle_width 640 \
 --rectangle_height 790 \
