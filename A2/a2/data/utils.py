@@ -1,8 +1,7 @@
 import cv2
 from pathlib import Path
 from a2.algorithms.segmentation import segment_image
-import numpy as np
-from a2.data.preprocessing import adjust_gamma, color_model_binary_image_conversion
+from a2.data.preprocessing import color_model_binary_image_conversion
 
 global LINE_THICKNESS
 
@@ -103,7 +102,6 @@ def save_segmented_frames(
             if not ret:
                 print("Can't receive frame (stream end?). Exiting ...")
                 break
-
             frame_height, frame_width = frame.shape[:2]
             center = (frame_width // 2, frame_height // 2)
             offset_x = rectangle_width // 2
@@ -122,20 +120,13 @@ def save_segmented_frames(
                     top_left[0] + LINE_THICKNESS : bottom_right[0] - LINE_THICKNESS,
                 ]
 
-                adjusted_image = region_of_interest.copy()
+                cropped_image = region_of_interest.copy()
+                binary_image = color_model_binary_image_conversion(cropped_image)
+                c = segment_image(cropped_image, gamma)
 
-                # sharpen kernel
-                kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
-                adjusted_image = cv2.filter2D(adjusted_image, -1, kernel)
-
-                adjusted_image = adjust_gamma(adjusted_image, gamma)
-                binary_image = color_model_binary_image_conversion(adjusted_image)
-
-                c = segment_image(binary_image)
                 cv2.drawContours(
                     region_of_interest, [c], -1, (0, 255, 0), LINE_THICKNESS
                 )
-
                 # save without rectangle
                 cv2.imwrite(
                     str(save_path / f"frame_{image_number}_rgb.png"), region_of_interest

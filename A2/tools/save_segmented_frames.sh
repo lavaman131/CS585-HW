@@ -1,7 +1,7 @@
 #!/bin/bash
 
 python save_segmented_frames.py \
---save_dir "../data/demo" \
+--save_dir "../experiments/demo" \
 --rectangle_width 640 \
 --rectangle_height 790 \
 --gamma 0.375 \
