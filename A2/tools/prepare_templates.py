@@ -9,7 +9,7 @@ import pandas as pd
 def main():
     parser = ArgumentParser()
     parser.add_argument(
-        "--labels_file",
+        "--template_labels_file",
         type=str,
         required=True,
         help="Path to the template image labels .csv file.",
@@ -35,12 +35,12 @@ def main():
 
     args = parser.parse_args()
 
-    labels_file = Path(args.labels_file)
+    template_labels_file = Path(args.template_labels_file)
     save_dir = Path(args.save_dir)
     save_dir.mkdir(parents=True, exist_ok=True)
     template_images_dir = Path(args.template_images_dir)
 
-    image_metadata = pd.read_csv(labels_file)
+    image_metadata = pd.read_csv(template_labels_file)
 
     for _, row in image_metadata.iterrows():
         image = cv2.imread(str(template_images_dir.joinpath(row.image_name)))

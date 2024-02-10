@@ -2,11 +2,12 @@ import cv2
 import numpy as np
 import pandas as pd
 from pathlib import Path
+from typing import Dict
 
 
 def template_match_classify(
     image: np.ndarray, template_images_dir: str, image_metadata: pd.DataFrame
-) -> int:
+) -> Dict[str, float]:
     """
     Uses template matching to recognize hand shapes.
 
@@ -44,4 +45,4 @@ def template_match_classify(
                 max_score = score
                 pred = row.label
 
-    return pred
+    return {"pred": pred, "score": max_score}
