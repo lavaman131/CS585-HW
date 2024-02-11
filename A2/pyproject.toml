@@ -1,14 +1,21 @@
-[build-system]
-requires = ["setuptools", "setuptools-scm"]
-build-backend = "setuptools.build_meta"
-
-[project]
+[tool.poetry]
 name = "a2"
 version = "0.1.0"
-requires-python = ">=3.8"
-authors = [
-  {name = "Alex Lavaee", email = "alavaee@bu.edu"}
-]
+description = "A series of classical computer vision algorithms for sign-language decision."
+authors = ["lavaman131 <lavaalex3@gmail.com>"]
+license = "MIT"
+readme = "README.md"
 
-[tool.setuptools]
-packages = ["a2"]
+[tool.poetry.dependencies]
+python = "^3.9"
+numpy = "^1.26.4"
+pandas = "^2.2.0"
+opencv-python = "^4.9.0.80"
+fire = "^0.5.0"
+colorama = "^0.4.6"
+pyarrow = "^15.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
