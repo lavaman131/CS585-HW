@@ -8,42 +8,51 @@ from a2.data.preprocessing import color_model_binary_image_conversion
 import csv
 from colorama import Fore
 
-global LINE_THICKNESS
+global SCRIPT_DIR
+SCRIPT_DIR = Path(__file__).resolve().parent
 
+global TEMPLATE_LABELS_FILE
+global TEMPLATE_IMAGES_DIR
+
+TEMPLATE_LABELS_FILE = str(
+    SCRIPT_DIR.parent.parent.joinpath("templates/binary_images/labels.csv")
+)
+TEMPLATE_IMAGES_DIR = str(SCRIPT_DIR.parent.parent.joinpath("templates/binary_images"))
+
+global LINE_THICKNESS
 LINE_THICKNESS = 3
 
 
 def predict(
-    template_labels_file: str,
-    template_images_dir: str,
-    save_dir: str,
+    camera_id: int = 0,
+    save_dir: str = "./experiments/demo",
+    num_frames_to_save: int = 5,
     ground_truth_label: int = -1,
+    start_delay_seconds: int = 3,
+    width: int = 1920,
+    height: int = 1080,
     roi_width: int = 640,
     roi_height: int = 790,
     gamma: float = 0.375,
-    camera_id: int = 0,
-    width: int = 1920,
-    height: int = 1080,
     fps: int = 30,
-    num_frames_to_save: int = 5,
-    start_delay_seconds: int = 3,
+    template_labels_file: str = TEMPLATE_LABELS_FILE,
+    template_images_dir: str = TEMPLATE_IMAGES_DIR,
 ) -> None:
     """
     Captures video frames and saves binary and RGB images of the region of interest along with the predicted label.
-    :param ground_truth_label: ground truth label for the frames.
-    :param template_labels_file: Path to the template image labels .csv file.
-    :param template_images_dir: Directory containing the binary template images.
+    :param camera_id: ID of the camera to capture frames from.
     :param save_dir: Directory where frames will be saved.
+    :param num_frames_to_save: Number of frames to save.
+    :param ground_truth_label: ground truth label for the frames.
+    :param start_delay_seconds: Delay before starting capture, in seconds.
+    :param width: Width of the captured frames.
+    :param height: Height of the captured frames.
     :param roi_width: Width of the rectangular region of interest to capture frames from.
     :param roi_height: Height of the rectangular region of interest to capture frames from.
     :param gamma: Gamma value for adjusting the brightness of the captured frames.
-    :param camera_id: ID of the camera to capture frames from.
-    :param width: Width of the captured frames.
-    :param height: Height of the captured frames.
     :param fps: Frames per second for video capture.
-    :param num_frames_to_save: Number of frames to save.
-    :param start_delay_seconds: Delay before starting capture, in seconds.
-    :param binary_threshold: Threshold for converting frames to binary images.
+    :param template_labels_file: Path to the template image labels .csv file.
+    :param template_images_dir: Directory containing the binary template images.
     :return: None
     """
     ground_truth_label = int(ground_truth_label)
