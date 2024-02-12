@@ -62,18 +62,41 @@ The project is structured as follows:
     └── prepare_templates.sh
 ```
 
-### Setup
-
-
-
 I use binary image analysis followed by max contour detection for the segmentation of the hand. I also use template matching (with templates augmented via rotations to capture possible orientations of the hand) with the maximum normalized correlation coefficient for classifying the hand movement as the digit 1, 2, 3, 4, or 5.
 
 ## 🔬 Experiments
 
 ## 📈 Results
 
+## 🎮 Demo
+
+### 📦 Setup
+
+The project is implemented in Python 3.10. The dependencies are managed using Poetry. To install the dependencies, run the following commands:
+
+```bash
+# create a virtual environment
+python -m venv .venv
+# activate the virtual environment
+source .venv/bin/activate
+# install the dependencies
+poetry install
+```
+
+## 🚀 Usage
+
+To run the demo, execute the following command:
+
+```bash
+./main.sh
+```
+
 ## 🗣️ Discussion
 
 ## 🏆 Conclusions
 
 ## 🎬 Credits and Bibliography
+
+[Gamma Correction](https://pyimagesearch.com/2015/10/05/opencv-gamma-correction/)
+
+[Count Approximation](https://pyimagesearch.com/2021/10/06/opencv-contour-approximation/)

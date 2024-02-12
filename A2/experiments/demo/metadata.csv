@@ -1,9 +1,0 @@
-key,value
-roi_width,640.0
-roi_height,790.0
-gamma,0.375
-width,1920.0
-height,1080.0
-fps,30.0
-num_frames_to_save,5.0
-start_delay_seconds,3.0

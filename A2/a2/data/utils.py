@@ -1,5 +1,6 @@
 import cv2
 import pandas as pd
+import numpy as np
 from pathlib import Path
 from a2.algorithms.classification import template_match_classify
 from a2.algorithms.segmentation import segment_image
@@ -13,10 +14,10 @@ LINE_THICKNESS = 3
 
 
 def predict(
-    ground_truth_label: int,
     template_labels_file: str,
     template_images_dir: str,
     save_dir: str,
+    ground_truth_label: int = -1,
     roi_width: int = 640,
     roi_height: int = 790,
     gamma: float = 0.375,
@@ -45,6 +46,7 @@ def predict(
     :param binary_threshold: Threshold for converting frames to binary images.
     :return: None
     """
+    ground_truth_label = int(ground_truth_label)
     save_path = Path(save_dir)
     save_path.mkdir(parents=True, exist_ok=True)
 
@@ -94,11 +96,16 @@ def predict(
     )
 
     try:
-        while cap.isOpened() and frame_number < max_frames:
+        while (
+            cap.isOpened() and frame_number < max_frames and cv2.waitKey(1) != ord("q")
+        ):
             ret, frame = cap.read()
+            # flip frame horizontally
+            # frame = cv2.flip(frame, 1)
             if not ret:
-                print(Fore.RED + "Can't receive frame (stream end?). Exiting ...")
-                break
+                raise ValueError(
+                    Fore.RED + "Can't receive frame (stream end?). Exiting ..."
+                )
             frame_height, frame_width = frame.shape[:2]
             center = (frame_width // 2, frame_height // 2)
             offset_x = roi_width // 2
@@ -127,7 +134,14 @@ def predict(
 
                 pred, score = result["pred"], result["score"]
 
-                stats_writer.writerow([frame_number, pred, ground_truth_label, score])
+                stats_writer.writerow(
+                    [
+                        frame_number,
+                        pred,
+                        np.nan if ground_truth_label == -1 else ground_truth_label,
+                        score,
+                    ]
+                )
 
                 cv2.putText(
                     region_of_interest,
@@ -140,16 +154,17 @@ def predict(
                     cv2.LINE_AA,
                 )
 
-                cv2.putText(
-                    region_of_interest,
-                    f"Ground truth label: {str(ground_truth_label)}",
-                    (50, 100),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    1,
-                    (255, 255, 255),
-                    2,
-                    cv2.LINE_AA,
-                )
+                if ground_truth_label != -1:
+                    cv2.putText(
+                        region_of_interest,
+                        f"Ground truth label: {str(ground_truth_label)}",
+                        (50, 100),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        1,
+                        (255, 255, 255),
+                        2,
+                        cv2.LINE_AA,
+                    )
 
                 cv2.drawContours(
                     region_of_interest, [c], -1, (0, 255, 0), LINE_THICKNESS
@@ -168,12 +183,8 @@ def predict(
 
             cv2.imshow("frame", frame)
             frame_number += 1
-
-            if cv2.waitKey(1) == ord("q"):
-                break
-
     finally:
-        stats.close()
         # Ensure resources are released even in case of an error
+        stats.close()
         cap.release()
         cv2.destroyAllWindows()
