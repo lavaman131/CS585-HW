@@ -17,7 +17,7 @@ LINE_THICKNESS = 3
 
 def predict(
     camera_id: int,
-    save_dir: str,
+    save_dir: Path,
     num_frames_to_save: int,
     ground_truth_label: int,
     start_delay_seconds: int,

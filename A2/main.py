@@ -1,14 +1,18 @@
+from pathlib import Path
 from omegaconf import DictConfig
+from hydra.core.hydra_config import HydraConfig
+
 from a2.data.utils import predict
 import hydra
 
 
 @hydra.main(version_base=None, config_path="conf", config_name="config")
 def run(cfg: DictConfig) -> None:
-    # print(cfg)
+    h_cfg = HydraConfig.get()
+    run_dir = Path(h_cfg.run.dir)
     predict(
         camera_id=cfg.camera.id,
-        save_dir=cfg.save.dir,
+        save_dir=run_dir.joinpath(cfg.save.dir),
         num_frames_to_save=cfg.camera.num_frames,
         ground_truth_label=cfg.processing.ground_truth_label,
         start_delay_seconds=cfg.camera.start_delay_seconds,

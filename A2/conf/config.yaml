@@ -16,7 +16,7 @@ camera:
   start_delay_seconds: 3
 
 save:
-  dir: "./output_images"
+  dir: "output_images"
 
 processing:
   ground_truth_label: -1
