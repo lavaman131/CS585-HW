@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-from a2.data.preprocessing import adjust_gamma, color_model_binary_image_conversion
 
 
 def find_max_countour(binary_image: np.ndarray) -> np.ndarray:

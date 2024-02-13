@@ -9,37 +9,28 @@ from a2.data.preprocessing import (
 )
 import csv
 from colorama import Fore
-
-global SCRIPT_DIR
-SCRIPT_DIR = Path(__file__).resolve().parent
-
-global BASE_DIR
-global TEMPLATE_IMAGES_DIR
-global TEMPLATE_LABELS_FILE
-
-BASE_DIR = SCRIPT_DIR.parent.parent.joinpath("templates")
-
-TEMPLATE_IMAGES_DIR = str(BASE_DIR.joinpath("binary_images"))
-TEMPLATE_LABELS_FILE = str(BASE_DIR.joinpath("binary_images", "labels.csv"))
+import numpy as np
 
 global LINE_THICKNESS
 LINE_THICKNESS = 3
 
 
 def predict(
-    camera_id: int = 0,
-    save_dir: str = "./experiments/demo",
-    num_frames_to_save: int = 5,
-    ground_truth_label: int = -1,
-    start_delay_seconds: int = 3,
-    width: int = 1920,
-    height: int = 1080,
-    roi_width: int = 640,
-    roi_height: int = 790,
-    gamma: float = 0.375,
-    fps: int = 30,
-    template_labels_file: str = TEMPLATE_LABELS_FILE,
-    template_images_dir: str = TEMPLATE_IMAGES_DIR,
+    camera_id: int,
+    save_dir: str,
+    num_frames_to_save: int,
+    ground_truth_label: int,
+    start_delay_seconds: int,
+    width: int,
+    height: int,
+    roi_width: int,
+    roi_height: int,
+    gamma: float,
+    rotations: np.ndarray,
+    scales: np.ndarray,
+    fps: int,
+    template_labels_file: str,
+    template_images_dir: str,
 ) -> None:
     """
     Captures video frames and saves binary and RGB images of the region of interest along with the predicted label.
@@ -53,6 +44,8 @@ def predict(
     :param roi_width: Width of the rectangular region of interest to capture frames from.
     :param roi_height: Height of the rectangular region of interest to capture frames from.
     :param gamma: Gamma value for adjusting the brightness of the captured frames.
+    :param rotations: The rotations to rotate the binary template images by during template matching.
+    :param scales: The scales to resize the binary template images to during template matching.
     :param fps: Frames per second for video capture.
     :param template_labels_file: Path to the template image labels .csv file.
     :param template_images_dir: Directory containing the binary template images.
@@ -140,7 +133,7 @@ def predict(
                 binary_image = post_process_binary_image(binary_image, c)
 
                 result = template_match_classify(
-                    binary_image, template_images_dir, image_metadata
+                    binary_image, template_images_dir, image_metadata, scales, rotations
                 )
 
                 pred, score = result["pred"], result["score"]
@@ -154,34 +147,33 @@ def predict(
                     ]
                 )
 
-                # cv2.putText(
-                #     region_of_interest,
-                #     f"Predicted label: {str(pred)}",
-                #     (50, 50),
-                #     cv2.FONT_HERSHEY_SIMPLEX,
-                #     1,
-                #     (255, 255, 255),
-                #     2,
-                #     cv2.LINE_AA,
-                # )
+                cv2.putText(
+                    region_of_interest,
+                    f"Predicted label: {str(pred)}",
+                    (50, 50),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    1,
+                    (255, 255, 255),
+                    2,
+                    cv2.LINE_AA,
+                )
 
-                # if ground_truth_label != -1:
-                #     cv2.putText(
-                #         region_of_interest,
-                #         f"Ground truth label: {str(ground_truth_label)}",
-                #         (50, 100),
-                #         cv2.FONT_HERSHEY_SIMPLEX,
-                #         1,
-                #         (255, 255, 255),
-                #         2,
-                #         cv2.LINE_AA,
-                #     )
+                if ground_truth_label != -1:
+                    cv2.putText(
+                        region_of_interest,
+                        f"Ground truth label: {str(ground_truth_label)}",
+                        (50, 100),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        1,
+                        (255, 255, 255),
+                        2,
+                        cv2.LINE_AA,
+                    )
 
-                # cv2.drawContours(
-                #     region_of_interest, [c], -1, (0, 255, 0), LINE_THICKNESS
-                # )
+                cv2.drawContours(
+                    region_of_interest, [c], -1, (0, 255, 0), LINE_THICKNESS
+                )
 
-                # fill everything outside of the contour with black
                 # save without rectangle
                 cv2.imwrite(
                     str(save_path / f"frame_{image_number}_rgb.png"), region_of_interest
