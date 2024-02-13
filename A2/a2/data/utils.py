@@ -1,23 +1,26 @@
 import cv2
 import pandas as pd
-import numpy as np
 from pathlib import Path
 from a2.algorithms.classification import template_match_classify
-from a2.algorithms.segmentation import segment_image
-from a2.data.preprocessing import color_model_binary_image_conversion
+from a2.algorithms.segmentation import find_max_countour
+from a2.data.preprocessing import (
+    color_model_binary_image_conversion,
+    post_process_binary_image,
+)
 import csv
 from colorama import Fore
 
 global SCRIPT_DIR
 SCRIPT_DIR = Path(__file__).resolve().parent
 
-global TEMPLATE_LABELS_FILE
+global BASE_DIR
 global TEMPLATE_IMAGES_DIR
+global TEMPLATE_LABELS_FILE
 
-TEMPLATE_LABELS_FILE = str(
-    SCRIPT_DIR.parent.parent.joinpath("templates/binary_images/labels.csv")
-)
-TEMPLATE_IMAGES_DIR = str(SCRIPT_DIR.parent.parent.joinpath("templates/binary_images"))
+BASE_DIR = SCRIPT_DIR.parent.parent.joinpath("templates")
+
+TEMPLATE_IMAGES_DIR = str(BASE_DIR.joinpath("binary_images"))
+TEMPLATE_LABELS_FILE = str(BASE_DIR.joinpath("binary_images", "labels.csv"))
 
 global LINE_THICKNESS
 LINE_THICKNESS = 3
@@ -105,9 +108,7 @@ def predict(
     )
 
     try:
-        while (
-            cap.isOpened() and frame_number < max_frames and cv2.waitKey(1) != ord("q")
-        ):
+        while cap.isOpened() and frame_number < max_frames:
             ret, frame = cap.read()
             # flip frame horizontally
             # frame = cv2.flip(frame, 1)
@@ -134,8 +135,9 @@ def predict(
                 ]
 
                 cropped_image = region_of_interest.copy()
-                binary_image = color_model_binary_image_conversion(cropped_image)
-                c = segment_image(cropped_image, gamma)
+                binary_image = color_model_binary_image_conversion(cropped_image, gamma)
+                c = find_max_countour(binary_image)
+                binary_image = post_process_binary_image(binary_image, c)
 
                 result = template_match_classify(
                     binary_image, template_images_dir, image_metadata
@@ -147,38 +149,39 @@ def predict(
                     [
                         frame_number,
                         pred,
-                        np.nan if ground_truth_label == -1 else ground_truth_label,
+                        "" if ground_truth_label == -1 else ground_truth_label,
                         score,
                     ]
                 )
 
-                cv2.putText(
-                    region_of_interest,
-                    f"Predicted label: {str(pred)}",
-                    (50, 50),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    1,
-                    (255, 255, 255),
-                    2,
-                    cv2.LINE_AA,
-                )
+                # cv2.putText(
+                #     region_of_interest,
+                #     f"Predicted label: {str(pred)}",
+                #     (50, 50),
+                #     cv2.FONT_HERSHEY_SIMPLEX,
+                #     1,
+                #     (255, 255, 255),
+                #     2,
+                #     cv2.LINE_AA,
+                # )
 
-                if ground_truth_label != -1:
-                    cv2.putText(
-                        region_of_interest,
-                        f"Ground truth label: {str(ground_truth_label)}",
-                        (50, 100),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        1,
-                        (255, 255, 255),
-                        2,
-                        cv2.LINE_AA,
-                    )
+                # if ground_truth_label != -1:
+                #     cv2.putText(
+                #         region_of_interest,
+                #         f"Ground truth label: {str(ground_truth_label)}",
+                #         (50, 100),
+                #         cv2.FONT_HERSHEY_SIMPLEX,
+                #         1,
+                #         (255, 255, 255),
+                #         2,
+                #         cv2.LINE_AA,
+                #     )
 
-                cv2.drawContours(
-                    region_of_interest, [c], -1, (0, 255, 0), LINE_THICKNESS
-                )
-                cv2.fillPoly(binary_image, [c], (255, 255, 255))
+                # cv2.drawContours(
+                #     region_of_interest, [c], -1, (0, 255, 0), LINE_THICKNESS
+                # )
+
+                # fill everything outside of the contour with black
                 # save without rectangle
                 cv2.imwrite(
                     str(save_path / f"frame_{image_number}_rgb.png"), region_of_interest
@@ -190,10 +193,16 @@ def predict(
 
                 image_number += 1
 
+            if cv2.waitKey(1) == ord("q"):
+                break
+
             cv2.imshow("frame", frame)
             frame_number += 1
     finally:
-        # Ensure resources are released even in case of an error
-        stats.close()
         cap.release()
         cv2.destroyAllWindows()
+        # Ensure resources are released even in case of an I/O error
+        try:
+            stats.close()
+        except TimeoutError:
+            stats.close()

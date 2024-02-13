@@ -1,9 +1,13 @@
 import cv2
-from a2.algorithms.segmentation import segment_image
-import numpy as np
 from argparse import ArgumentParser
 from pathlib import Path
 import pandas as pd
+from a2.algorithms.segmentation import find_max_countour
+
+from a2.data.preprocessing import (
+    color_model_binary_image_conversion,
+    post_process_binary_image,
+)
 
 
 def main():
@@ -44,9 +48,9 @@ def main():
 
     for _, row in image_metadata.iterrows():
         image = cv2.imread(str(template_images_dir.joinpath(row.image_name)))
-        c = segment_image(image, args.gamma)
-        binary_image = np.zeros(image.shape[:2], dtype=np.uint8)
-        cv2.fillPoly(binary_image, [c], (255, 255, 255))
+        binary_image = color_model_binary_image_conversion(image, args.gamma)
+        c = find_max_countour(binary_image)
+        binary_image = post_process_binary_image(binary_image, c)
         cv2.imwrite(str(save_dir.joinpath(row.image_name)), binary_image)
 
     image_metadata.to_csv(save_dir.joinpath("labels.csv"), index=False)
