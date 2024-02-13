@@ -126,28 +126,15 @@ The program will display the following GUI:
 ### Basic Usage
 
 ```bash
-./main.sh
+python main.py
 ```
 
 ### Advanced Usage
 
-Refer to `predict` function in `main.py` for more details about parameters.
+Refer to `predict` function in `main.py` for more details about parameters. You can specify the following parameters in the `conf/config.yaml` [hydra](https://hydra.cc/docs/intro/) configuration file or as command line arguments, e.g.
 
 ```bash
-python main.py \
---camera_id 0 \
---save_dir "./experiments/demo" \
---num_frames_to_save 5 \
---ground_truth_label -1 \
---start_delay_seconds 3 \
---width 1920 \
---height 1080 \
---roi_width 640 \
---roi_height 790 \
---gamma 0.375 \
---fps 30 \
---template_labels_file "./templates/binary_images/labels.csv"
---template_images_dir "./templates/binary_images"
+python main.py hydra.job.name=demo processing.ground_truth_label=-1
 ```
 
 
