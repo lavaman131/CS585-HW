@@ -80,6 +80,8 @@ I use binary image analysis followed by max contour detection for the segmentati
 
 ## 🔬 Experiments
 
+I conducted the following experiments to evaluate the performance of the hand gesture recognition system and logged the results in the `./experiments` directory with [hydra](https://hydra.cc/docs/intro/) configuration files. See more details about this in the [usage section](#-usage) of the README.
+
 ## 📈 Results
 
 ### Confusion Matrix
@@ -134,7 +136,7 @@ python main.py
 Refer to `predict` function in `main.py` for more details about parameters. You can specify the following parameters in the `conf/config.yaml` [hydra](https://hydra.cc/docs/intro/) configuration file or as command line arguments, e.g.
 
 ```bash
-python main.py hydra.job.name=demo processing.ground_truth_label=-1
+python main.py hydra.job.name=rotation_template_matching processing.ground_truth_label=1
 ```
 
 
