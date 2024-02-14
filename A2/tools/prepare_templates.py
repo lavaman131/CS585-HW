@@ -63,7 +63,6 @@ def main():
     parser.add_argument(
         "--post_process",
         action="store_true",
-        type=bool,
         default=False,
         help="Post process binary images.",
     )

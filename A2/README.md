@@ -136,8 +136,6 @@ The program will display the following GUI:
 
 ![GUI](./reports/gui.png)
 
-
-
 ### Basic Usage
 
 ```bash

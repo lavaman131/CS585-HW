@@ -13,9 +13,10 @@ def post_process_binary_image(
     :return: The post processed image.
     """
 
-    # fill everything outside of the contour with white
-    post_processed_image = np.full_like(binary_image, 255, dtype=np.uint8)
-    post_processed_image = cv2.fillPoly(post_processed_image, [max_countour], 0)  # type: ignore
+    # fill everything with black
+    post_processed_image = np.full_like(binary_image, 0, dtype=np.uint8)
+    # fill the max contour (background) with white
+    post_processed_image = cv2.fillPoly(post_processed_image, [max_countour], 255)  # type: ignore
 
     return post_processed_image
 
@@ -80,6 +81,7 @@ def color_model_binary_image_conversion(
     )
 
     binary_image = (rule_1 | rule_2).astype(np.uint8) * 255
+    binary_image = cv2.bitwise_not(binary_image)
 
     return binary_image
 

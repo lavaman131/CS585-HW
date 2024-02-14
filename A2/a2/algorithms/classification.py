@@ -32,9 +32,7 @@ def template_match(
                 (new_width, new_height),
             )
             matches = cv2.matchTemplate(
-                image,
-                binary_template_rotated,
-                cv2.TM_CCORR_NORMED,
+                image, binary_template_rotated, cv2.TM_CCORR_NORMED
             )
             _, score, _, _ = cv2.minMaxLoc(matches)
             if score > max_score:

@@ -131,7 +131,6 @@ def predict(
                 cropped_image = region_of_interest.copy()
                 binary_image = color_model_binary_image_conversion(cropped_image, gamma)
                 c = find_max_countour(binary_image)
-                # binary_image = post_process_binary_image(binary_image, c)
 
                 result = template_match_classify(
                     binary_image, template_images_dir, image_metadata, scales, rotations
