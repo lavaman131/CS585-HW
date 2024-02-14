@@ -148,7 +148,7 @@ The following are the results of the experiments which I logged in the `./experi
 
 ### Confusion Matrix
 
-<img src="./reports/confusion_matrix.png" width="50%">
+<img src="./reports/confusion_matrix.png" width="65%">
 
 ## 🎮 Demo
 
