@@ -3,10 +3,7 @@ import pandas as pd
 from pathlib import Path
 from a2.algorithms.classification import template_match_classify
 from a2.algorithms.segmentation import find_max_countour
-from a2.data.preprocessing import (
-    color_model_binary_image_conversion,
-    post_process_binary_image,
-)
+from a2.data.preprocessing import color_model_binary_image_conversion
 import csv
 from colorama import Fore
 import numpy as np

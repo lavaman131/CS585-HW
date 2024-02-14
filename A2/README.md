@@ -64,23 +64,70 @@ The project is structured as follows:
 
 ### Classical Computer Vision Algorithms
 
-I use binary image analysis followed by max contour detection for the segmentation of the hand. I also use template matching (with templates augmented via rotations to capture possible orientations of the hand) with the maximum normalized correlation coefficient for classifying the hand movement as the digit 1, 2, 3, 4, or 5.
+I use binary image analysis followed by max contour detection for the segmentation of the hand. I also use template matching (with templates augmented via different scales and rotations to capture possible scales and orientations of the hand) with the maximum normalized correlation coefficient for classifying the hand movement as the digit 1, 2, 3, 4, or 5. More detailed analysis of the algorithms used is provided below.
 
 #### Binary Image Conversion Using Skin Color
 
-!TODO add more details about the algorithms used for the following including mathematical details and algorithm
+By utilizing thresholding of RGB, HSV, and YCRB color profiles utilizing a combination of bitwise AND along with bitwise OR operators (which can be seen in the `color_model_binary_image_conversion` function I created [here](./a2/data/preprocessing.py) in my code) of an image as described in [this paper](https://arxiv.org/pdf/1708.02694.pdf), I was able to segment skin in an image with high accuracy. Using this mask, I was able to convert the original image to a binary image where the skin is black and the background is white. This binary image is then used for contour detection and template matching in the following steps.
 
-#### Countour Detection for Hand Segmentation
+#### Contour Detection for Hand Segmentation
 
-!TODO add more details about the algorithms used for the following including mathematical details and algorithm
+After converting the image to a binary format, the next step is to segment the hand from the background. This is achieved through contour detection, a process used to find the outlines of objects within binary images. The algorithm I employ for this purpose is based on the principle of finding continuous curves that delineate object boundaries in an image. The specific steps are as follows:
+
+1. **Find Contours**: Utilize OpenCV's `findContours` function, which implements the Suzuki85 algorithm, to detect the contours in the binary image. This function returns a list of contours found, with each contour represented as a vector of points.
+
+2. **Select Max Contour**: Among all detected contours, the one with the maximum area is considered to represent the hand. This is based on the assumption that the hand is the largest skin-colored object in the image. The area of a contour is calculated using OpenCV's `contourArea` function.
+
+3. **Draw/Use Contour**: The maximal contour is then used either to create a mask for the hand or to extract the hand's outline for further processing. This step is crucial for isolating the hand from the rest of the image, ensuring that subsequent steps operate solely on the hand region.
+
+Mathematically, contour detection can be seen as the process of identifying the boundaries $C$ of a region $R$ in the binary image where $C = \partial R$. The Suzuki85 algorithm efficiently traces these boundaries by examining the connectivity of edge pixels in the image.
 
 #### Template Matching for Sign Language Digit Classification
 
-!TODO add more details about the algorithms used for the following including mathematical details and algorithm
+Template matching is a technique in computer vision used for finding areas of an image that match a template image. In the context of classifying hand movements as digits 1 through 5, I leverage template matching to compare the segmented hand region against a set of pre-defined templates corresponding to each digit. The process involves:
+
+1. **Template Preparation**: Generate a set of template images for each digit (1-5), capturing various scales and orientations to account for different hand sizes and positions. This augmentation ensures a comprehensive set of references for matching.
+
+2. **Normalized Correlation Coefficient**: For each template, calculate the match with the segmented hand using the normalized correlation coefficient. This metric measures the similarity between the template and portions of the target image, with a range from -1 (no match) to 1 (perfect match). Mathematically, it is defined as:
+
+$$
+\begin{align*}
+&\text{NCC}(T, I) = \frac{\sum_{x,y} [T(x,y) - \bar{T}][I(x,y) - \bar{I}]}{\sqrt{\sum_{x,y} [T(x,y) - \bar{T}]^2 \sum_{x,y} [I(x,y) - \bar{I}]^2}} \\
+&\text{where } T \text{ is the template, } I \text{ is the image under examination, and } \bar{T}, \bar{I} \text{ are the mean values of } T \text{ and } I, \text{ respectively.}
+\end{align*}
+$$
+
+3. **Matching and Classification**: For each digit's set of templates, compute the NCC across the hand region. The digit whose template yields the highest NCC is determined to be the hand's sign. This approach effectively classifies the hand gesture by finding the most similar template in terms of shape and orientation.
+
+By employing these algorithms, the system can robustly segment the hand from the background and classify its gesture into one of the five digits, using the principles of binary image analysis, contour detection, and template matching. This method combines traditional computer vision techniques with practical application strategies, offering a reliable way to interpret sign language digits through visual inputs.
 
 ## 🔬 Experiments
 
 I conducted the following experiments to evaluate the performance of the hand gesture recognition system and logged the results in the `./experiments` directory with [hydra](https://hydra.cc/docs/intro/) configuration files. See more details about this in the [usage section](#-usage) of the README.
+
+### Region of Interest (ROI)
+
+I experimented with different regions of interest (ROI) to evaluate the performance of the hand gesture recognition system. The ROI is defined as the location in each frame where the processing happens (visually depicted by a green rectangle in my GUI). Intuitively, I saw the best performance when the ROI was centered around the hand. This is because using the full frame as the ROI would skew the results as the background would be included in the processing.
+
+
+
+
+
+
+
+
+        width=cfg.camera.width,
+        height=cfg.camera.height,
+        roi_width=cfg.camera.roi.width,
+        roi_height=cfg.camera.roi.height,
+        gamma=cfg.processing.gamma,
+        rotations=cfg.processing.template_matching.rotations,
+        scales=cfg.processing.template_matching.scales,
+        fps=cfg.camera.fps,
+        template_labels_file=cfg.processing.template_matching.labels_file,
+        template_images_dir=cfg.processing.template_matching.images_dir,
+
+TODO: Add more details about the experiments and the results.
 
 ## 📈 Results
 
@@ -96,16 +143,9 @@ camera.start_delay_seconds=5
 
 The following are the results of the experiments which I logged in the `./experiments` directory. Then I used the `./tools/evaluate.py` script to evaluate the performance of the hand gesture recognition system and logged the results in the `./reports` directory.
 
-
 ### Confusion Matrix
 
 <img src="./reports/confusion_matrix.png" width="50%">
-
-Along with the program, submit the following information about your graphics program:
-
-An overall description
-How the graphics respond to different hand shapes and/or gestures
-Interesting and fun aspects of the graphics display
 
 ## 🎮 Demo
 
@@ -134,7 +174,21 @@ The program works best when the user tries to shape their hand to mimic the temp
 
 The program will display the following GUI:
 
-![GUI](./reports/gui.png)
+<img src="./reports/gui.png" width="70%">
+
+#### Features of the GUI
+
+- **Live Feed**: The live feed from the camera.
+- **Classification Results**: The classification results (in white text) from the processed frames are displayed in real-time.
+- **Hand Segmentation**: The hand segmentation (in green) from the processed frames are displayed in real-time in the green bounding box.
+- **Binary Image**: The binary images from the live feed are saved to the specified directory (`save_dir`).
+
+#### Interesting and Fun Aspects of the Graphics Display
+
+The following are some interesting and fun aspects of the graphics display:
+
+- The classification results are displayed in "real-time."
+- The hand segmentation and sign-language classification is displayed in real-time in the green bounding box.
 
 ### Basic Usage
 
@@ -154,13 +208,21 @@ processing.ground_truth_label=1
 
 ## 🗣️ Discussion
 
+The performance of the system is impressive given the simplicity of the algorithms used. In the experiments I ran, the system was able to classify the sign-language digit 5 with 100% accuracy. However, the environment I ran my experiments in was relatively controlled with a static background and good lighting conditions. Using binary image analysis, max contour detection for the segmentation of the hand, and template matching proved to be a basic system to recognize sign-language hand gestures from a video stream.
+
 ## 🏆 Conclusions
+
+While it is possible to recognize sign-language hand gestures from a video stream using classical computer vision algorithms, the performance of the hand gesture recognition system is far from perfect. Additionally, the amount of processing that occurs per frame makes the algorithm very slow (re-implementing things in C++ could help 😊). The system works best when the user tries to shape their hand to mimic the template images for the sign-language digit (1-5) that they are trying to automatically classify. The hand should be still and the background should be relatively static with not too much overexposure or underexposure in the camera. The system will not work well if the hand is in motion or if the background is not relatively static. Future work could involve using machine learning or deep learning algorithms to improve the performance of the hand gesture recognition system.
 
 ## 🎬 Credits and Bibliography
 
 [Gamma Correction](https://pyimagesearch.com/2015/10/05/opencv-gamma-correction/)
 
-[Count Approximation](https://pyimagesearch.com/2021/10/06/opencv-contour-approximation/)
+[Skin Detection](https://arxiv.org/pdf/1708.02694.pdf)
+
+[Contour Approximation](https://pyimagesearch.com/2021/10/06/opencv-contour-approximation/)
+
+[Template Matching](https://pyimagesearch.com/2021/10/11/opencv-template-matching/)
 
 ## 👥 Collaborators
 

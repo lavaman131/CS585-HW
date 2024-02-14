@@ -1,13 +1,12 @@
 from sklearn.metrics import confusion_matrix
 import pandas as pd
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
 from pathlib import Path
 import numpy as np
 
 global GT_LABELS
-GT_LABELS = ["1", "2", "3", "4", "5"]
+GT_LABELS = ["one", "two", "three", "four", "five"]
 
 
 def get_heatmap_text(cf_matrix: np.ndarray) -> np.ndarray:
