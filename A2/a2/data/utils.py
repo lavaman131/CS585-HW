@@ -127,7 +127,9 @@ def predict(
 
                 cropped_image = region_of_interest.copy()
                 binary_image = color_model_binary_image_conversion(cropped_image, gamma)
-                c = find_max_countour(binary_image)
+                cnts = cv2.findContours(
+                    binary_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+                )[0]
 
                 result = template_match_classify(
                     binary_image, template_images_dir, image_metadata, scales, rotations
@@ -168,7 +170,7 @@ def predict(
                     )
 
                 cv2.drawContours(
-                    region_of_interest, [c], -1, (0, 255, 0), LINE_THICKNESS
+                    region_of_interest, cnts, -1, (0, 255, 0), LINE_THICKNESS
                 )
 
                 # save without rectangle

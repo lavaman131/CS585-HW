@@ -6,8 +6,8 @@ camera:
     width: 640
     height: 790
   fps: 30
-  num_frames: 5
-  start_delay_seconds: 3
+  num_frames: 10
+  start_delay_seconds: 5
 save:
   dir: outputs
 processing:
