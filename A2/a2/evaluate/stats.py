@@ -56,5 +56,6 @@ def export_confusion_matrix(stats: pd.DataFrame, save_path: Path) -> None:
     cbar.set_ticks([0, 0.2, 0.4, 0.6, 0.8, 1])
     cbar.ax.set_yticklabels(["0%", "20%", "40%", "60%", "80%", "100%"])
 
+    # export with transparent background
     plt.savefig(save_path.joinpath("confusion_matrix.png"), dpi=300)
     plt.close()

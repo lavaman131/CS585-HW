@@ -51,6 +51,7 @@ def predict(
     :param template_images_dir: Directory containing the binary template images.
     :return: None
     """
+    assert all(s <= 1.0 for s in scales), "All scales must be at most 1."
     ground_truth_label = int(ground_truth_label)
     save_path = Path(save_dir)
     save_path.mkdir(parents=True, exist_ok=True)
@@ -130,7 +131,7 @@ def predict(
                 cropped_image = region_of_interest.copy()
                 binary_image = color_model_binary_image_conversion(cropped_image, gamma)
                 c = find_max_countour(binary_image)
-                binary_image = post_process_binary_image(binary_image, c)
+                # binary_image = post_process_binary_image(binary_image, c)
 
                 result = template_match_classify(
                     binary_image, template_images_dir, image_metadata, scales, rotations
@@ -193,7 +194,7 @@ def predict(
     finally:
         cap.release()
         cv2.destroyAllWindows()
-        # Ensure resources are released even in case of an I/O error
+        # Ensure resources are released even in case of a NFS I/O error
         try:
             stats.close()
         except TimeoutError:

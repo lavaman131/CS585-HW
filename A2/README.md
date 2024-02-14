@@ -84,6 +84,19 @@ I conducted the following experiments to evaluate the performance of the hand ge
 
 ## 📈 Results
 
+I ran 20 trials with each finger to evaluate the performance of the hand gesture recognition system. For instance, I used the following command for the sign language digit 5 with 20 frames and a 5-second delay to start the camera and allow the user to prepare their hand for the gesture recognition system to capture the frames and process them for classification:
+
+```bash
+python main.py \
+hydra.job.name=class_5 \
+processing.ground_truth_label=5 \
+camera.num_frames=20 \
+camera.start_delay_seconds=5
+```
+
+The following are the results of the experiments which I logged in the `./experiments` directory. Then I used the `./tools/evaluate.py` script to evaluate the performance of the hand gesture recognition system and logged the results in the `./reports` directory.
+
+
 ### Confusion Matrix
 
 <img src="./reports/confusion_matrix.png" width="50%">
@@ -133,12 +146,13 @@ python main.py
 
 ### Advanced Usage
 
-Refer to `predict` function in `main.py` for more details about parameters. You can specify the following parameters in the `conf/config.yaml` [hydra](https://hydra.cc/docs/intro/) configuration file or as command line arguments, e.g.
+Refer to `predict` function in `main.py` for more details about parameters. You can specify the following parameters in the `conf/config.yaml` hydra configuration file or as command line arguments, e.g.
 
 ```bash
-python main.py hydra.job.name=rotation_template_matching processing.ground_truth_label=1
+python main.py \
+hydra.job.name=rotation_template_matching \
+processing.ground_truth_label=1
 ```
-
 
 ## 🗣️ Discussion
 

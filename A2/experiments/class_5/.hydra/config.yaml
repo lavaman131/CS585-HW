@@ -1,0 +1,25 @@
+camera:
+  id: 0
+  width: 1920
+  height: 1080
+  roi:
+    width: 640
+    height: 790
+  fps: 30
+  num_frames: 20
+  start_delay_seconds: 5
+save:
+  dir: outputs
+processing:
+  ground_truth_label: 5
+  gamma: 0.375
+  template_matching:
+    rotations:
+    - -5.0
+    - 0.0
+    - 5.0
+    scales:
+    - 0.75
+    - 1.0
+    labels_file: ./templates/binary_hands/labels.csv
+    images_dir: ./templates/binary_hands

@@ -30,10 +30,10 @@ def color_model_binary_image_conversion(
     :return: A binary image.
     """
     # sharpen kernel
-    kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
-    adjusted_image = cv2.filter2D(rgb_image, -1, kernel)
+    # kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
+    # adjusted_image = cv2.filter2D(rgb_image, -1, kernel)
 
-    adjusted_image = adjust_gamma(adjusted_image, gamma)
+    adjusted_image = adjust_gamma(rgb_image, gamma)
 
     B = adjusted_image[:, :, 0]
     G = adjusted_image[:, :, 1]
