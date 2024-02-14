@@ -99,35 +99,38 @@ $$
 
 3. **Matching and Classification**: For each digit's set of templates, compute the NCC across the hand region. The digit whose template yields the highest NCC is determined to be the hand's sign. This approach effectively classifies the hand gesture by finding the most similar template in terms of shape and orientation.
 
-By employing these algorithms, the system can robustly segment the hand from the background and classify its gesture into one of the five digits, using the principles of binary image analysis, contour detection, and template matching. This method combines traditional computer vision techniques with practical application strategies, offering a reliable way to interpret sign language digits through visual inputs.
+By employing these algorithms, the system can segment the hand from the background and classify its gesture into one of the five digits, using the principles of binary image analysis, contour detection, and template matching.
 
 ## 🔬 Experiments
 
 I conducted the following experiments to evaluate the performance of the hand gesture recognition system and logged the results in the `./experiments` directory with [hydra](https://hydra.cc/docs/intro/) configuration files. See more details about this in the [usage section](#-usage) of the README.
 
-### Region of Interest (ROI)
+### Different Region of Interest (ROI) Sizes
 
-I experimented with different regions of interest (ROI) to evaluate the performance of the hand gesture recognition system. The ROI is defined as the location in each frame where the processing happens (visually depicted by a green rectangle in my GUI). Intuitively, I saw the best performance when the ROI was centered around the hand. This is because using the full frame as the ROI would skew the results as the background would be included in the processing.
+I experimented with different regions of interest (ROI) to evaluate the performance of the hand gesture recognition system. The ROI is defined as the location in each frame where the processing happens (visually depicted by a green rectangle in my GUI). Intuitively, I saw the best performance when the ROI was centered around the hand. I decided to use an ROI width and height of 640 pixels and 790 pixels respectively. This is because using the full frame as the ROI would skew the results of the segmentation of the hand as the background would be included in the processing. Another practical implication is that the user can move their face outside of the ROI and not have it interfere with the processing of the hand gesture recognition system. Finally, the implementation of an ROI allows for a more intuitive and user-friendly experience for the user as they can see where the processing is happening.
 
+### Different Gamma Levels for Source Image
 
+I experimented with different gamma levels for the source image to evaluate the performance of the hand gesture recognition system. The gamma level is a parameter that controls the brightness of the source image. After experimenting with gamma levels from 0.1 to 1.2, I found that the best performance was achieved when the gamma level was set to 0.375. This is because it allowed there to be a greater contrast between the hand and the background. The gamma level can be changed based on the lighting conditions of the environment.
 
+### Template Matching
 
+#### Different Scales and Rotations
 
+Traditional template matching is very error prone because it relies on the exact match of the template with the image in terms of size and orientation. To overcome this, I experimented with different scales and rotations of the template images to evaluate the performance of the hand gesture recognition system. I found that the best performance was achieved when the template images were augmented with different scales and rotations. This is because it allowed the system to recognize the hand gesture even if the hand was in different orientations and positions in the video stream. The system was able to recognize the hand gesture even if the hand was occluded by other objects in the video stream.
 
+I ended up using the following scales (scale factor) and rotations (in degrees) for the template images:
 
+- **Scales**: [0.7, 0.8, 0.9, 1.0]
+- **Rotations**: [-20.0, -10.0, 0.0, 10.0, 20.0]
 
-        width=cfg.camera.width,
-        height=cfg.camera.height,
-        roi_width=cfg.camera.roi.width,
-        roi_height=cfg.camera.roi.height,
-        gamma=cfg.processing.gamma,
-        rotations=cfg.processing.template_matching.rotations,
-        scales=cfg.processing.template_matching.scales,
-        fps=cfg.camera.fps,
-        template_labels_file=cfg.processing.template_matching.labels_file,
-        template_images_dir=cfg.processing.template_matching.images_dir,
+#### Front and Back Camera Template Images
 
-TODO: Add more details about the experiments and the results.
+Another important experiment I conducted was to evaluate the performance of the system with template images taken with a front and back camera. I found that the system was able to perform better when the template image were taken with the same type of camera as the intended use. This is because the two different cameras lead to different orientations and shapes of the hand. I have included the template images taken with the front and back camera in the `./templates` directory. The template image can be specified by the user depending on whether they are using the front or back camera in the GUI (see the [advanced usage section](#advanced-usage) of the README for more details about this).
+
+#### Hand Template Image vs Finger Template Image
+
+I experimented with using a hand template image and a finger template image to evaluate the performance of the hand gesture recognition system. I found that the system was able to perform  much better with a hand template image. This is because the hand template image was able to capture the shape and orientation of the hand better than the finger template image.
 
 ## 📈 Results
 
@@ -185,10 +188,9 @@ The program will display the following GUI:
 
 #### Interesting and Fun Aspects of the Graphics Display
 
-The following are some interesting and fun aspects of the graphics display:
-
 - The classification results are displayed in "real-time."
 - The hand segmentation and sign-language classification is displayed in real-time in the green bounding box.
+- If a user has a Mac laptop, they can use Apple's [Continuity Camera](https://support.apple.com/en-us/102546) feature to use their iPhone as a live video feed source by specifying the `camera.id=1` in the `conf/config.yaml` file or via a command line argument as shown in the [advanced usage section](#advanced-usage) of the README.
 
 ### Basic Usage
 
@@ -201,9 +203,16 @@ python main.py
 Refer to `predict` function in `main.py` for more details about parameters. You can specify the following parameters in the `conf/config.yaml` hydra configuration file or as command line arguments, e.g.
 
 ```bash
+export TEMPLATE_MATCHING_TEMPLATES_BASE_DIR="./templates/front_face_camera/binary_hands"
+
 python main.py \
-hydra.job.name=rotation_template_matching \
-processing.ground_truth_label=1
+hydra.job.name=demo \
+camera.id=1 \
+processing.template_matching.templates_base_dir=$TEMPLATE_MATCHING_TEMPLATES_BASE_DIR \
+processing.template_matching.rotations="[-20.0,-10.0,0.0,10.0,20.0]" \
+processing.template_matching.scales="[0.7,0.8,0.9,1.0]" \
+processing.template_matching.labels_file="${TEMPLATE_MATCHING_TEMPLATES_BASE_DIR}/labels.csv" \
+processing.template_matching.images_dir=$TEMPLATE_MATCHING_TEMPLATES_BASE_DIR
 ```
 
 ## 🗣️ Discussion
@@ -216,7 +225,9 @@ While it is possible to recognize sign-language hand gestures from a video strea
 
 ## 🎬 Credits and Bibliography
 
-[Gamma Correction](https://pyimagesearch.com/2015/10/05/opencv-gamma-correction/)
+[Gamma Correction](https://docs.opencv.org/3.4/d3/dc1/tutorial_basic_linear_transform.html)
+
+[Gamma Correction 2](https://pyimagesearch.com/2015/10/05/opencv-gamma-correction/)
 
 [Skin Detection](https://arxiv.org/pdf/1708.02694.pdf)
 
