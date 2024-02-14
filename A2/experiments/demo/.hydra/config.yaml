@@ -22,6 +22,8 @@ processing:
     - 10.0
     - 20.0
     scales:
+    - 0.7
+    - 0.8
     - 0.9
     - 1.0
     labels_file: ${processing.template_matching.templates_base_dir}/labels.csv
