@@ -5,7 +5,6 @@ import seaborn as sns
 from pathlib import Path
 import numpy as np
 
-global GT_LABELS
 GT_LABELS = ["one", "two", "three", "four", "five"]
 
 

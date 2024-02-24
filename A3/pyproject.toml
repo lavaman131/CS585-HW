@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "a3"
+version = "0.1.0"
+description = "single object tracking, multi-object tracking, and data association"
+authors = ["lavaman131 <lavaalex3@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+opencv-python = "^4.9.0.80"
+numpy = "^1.26.4"
+ffmpeg-python = "^0.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

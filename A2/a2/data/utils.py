@@ -8,7 +8,6 @@ import csv
 from colorama import Fore
 import numpy as np
 
-global LINE_THICKNESS
 LINE_THICKNESS = 3
 
 
