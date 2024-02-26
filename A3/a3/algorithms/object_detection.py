@@ -82,6 +82,7 @@ class BoundingBoxMatcher:
         fps : int
             Frames per second of the video.
         """
+        self.available_ids = []  # implement recycling of track ids
         self.bounding_boxes = bounding_boxes
         self.max_distance_threshold = max_distance_threshold
         self.max_frame_skipped = max_frame_skipped
@@ -98,9 +99,15 @@ class BoundingBoxMatcher:
         bbox : Dict[str, int]
             Bounding box of the object.
         """
-        track = Track(track_id=self.track_id, bbox=bbox, dt=1.0 / self.fps)
+        dt = 1.0 / self.fps
+        if self.available_ids:
+            track_id = self.available_ids.pop()
+            track = Track(track_id=track_id, bbox=bbox, dt=dt)
+        else:
+            track = Track(track_id=self.track_id, bbox=bbox, dt=dt)
+            self.track_id += 1
+
         self.tracks.append(track)
-        self.track_id += 1
 
     def fit(self) -> Dict[str, List[Dict[str, int]]]:
         """Fits the bounding box matcher to the data.
@@ -168,11 +175,12 @@ class BoundingBoxMatcher:
                 detections[i]["id"] = self.tracks[-1].track_id
 
         # Remove tracks that have exceeded the max_frame_skipped threshold
-        self.tracks = [
-            track
-            for track in self.tracks
-            if track.skipped_frames <= self.max_frame_skipped
-        ]
+        new_tracks = []
+        for track in self.tracks:
+            if track.skipped_frames <= self.max_frame_skipped:
+                new_tracks.append(track)
+            else:
+                self.available_ids.append(track.track_id)
 
     def _calculate_cost_matrix(self, detections: List[Dict[str, int]]) -> np.ndarray:
         """Calculates the cost matrix for the Hungarian algorithm.

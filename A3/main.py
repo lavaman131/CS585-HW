@@ -1,3 +1,4 @@
+import json
 from a3.algorithms.object_detection import BoundingBoxMatcher
 from a3.utils.draw.object_detection import draw_bounding_boxes_in_video
 from a3.utils.io import load_obj_each_frame
@@ -54,6 +55,15 @@ if __name__ == "__main__":
         bounding_boxes=bounding_boxes,
         save_path="./data/submission/part_2_frame_dict.json",
     )
+
+    with open("./data/submission/part_2_frame_dict.json") as f:
+        bounding_boxes = json.load(f)
+
+    unique_ids = np.unique(
+        [bbox["id"] for frame in bounding_boxes for bbox in bounding_boxes[frame]]
+    )
+
+    print(unique_ids)
 
     draw_bounding_boxes_in_video(
         width=700,
