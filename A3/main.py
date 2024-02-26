@@ -59,12 +59,6 @@ if __name__ == "__main__":
     with open("./data/submission/part_2_frame_dict.json") as f:
         bounding_boxes = json.load(f)
 
-    unique_ids = np.unique(
-        [bbox["id"] for frame in bounding_boxes for bbox in bounding_boxes[frame]]
-    )
-
-    print(unique_ids)
-
     draw_bounding_boxes_in_video(
         width=700,
         height=500,
