@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     matcher = BoundingBoxMatcher(
         bounding_boxes=bounding_boxes,
-        max_distance_threshold=1.0,
+        max_distance_threshold=0.2,
         max_frame_skipped=fps,
         fps=fps,
     )
