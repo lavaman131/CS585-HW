@@ -80,5 +80,4 @@ poetry install
 ![](./assets/mot.gif)
 
 ## 👥 Collaborators
-
 * None
