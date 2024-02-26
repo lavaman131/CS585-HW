@@ -1,6 +1,5 @@
 from typing import Tuple
 import numpy as np
-from scipy.optimize import linear_sum_assignment
 
 
 class HungarianMatcher:
@@ -69,12 +68,3 @@ class HungarianMatcher:
         col_ind = ans[row_ind]
 
         return row_ind, col_ind
-
-
-if __name__ == "__main__":
-    n, m = 4, 4
-    A = np.random.rand(n, m)  # Example cost matrix
-    h = HungarianMatcher()
-    matching = h(A)
-    print(matching)
-    print(linear_sum_assignment(A))
