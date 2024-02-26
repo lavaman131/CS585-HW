@@ -1,117 +1,112 @@
-from typing import List
+from typing import Tuple
 import numpy as np
 from a3 import MISSING_VALUE
 import cv2
 import cv2.typing
 
 
-def alpha_beta_filter(
-    coords: cv2.typing.MatLike,
-    alpha: float,
-    beta: float,
-    x_0: float = 0.0,
-    v_0: float = 0.0,
-    dt: float = 1.0,
-) -> List[int]:
-    """Cleans and interpolates the object coordinates using alpha-beta filter as described in https://en.wikipedia.org/wiki/Alpha_beta_filter.
+class AlphaBetaFilter2D:
+    def __init__(
+        self,
+        alpha: float,
+        beta: float,
+        x_0: float = 0.0,
+        y_0: float = 0.0,
+        v_x_0: float = 0.0,
+        v_y_0: float = 0.0,
+        dt: float = 1.0,
+    ) -> None:
+        """Initializes the alpha-beta filter for 2D coordinates.
 
-    Parameters
-    ----------
-    coords : List[int]
-        List of coordinates of object.
-    alpha : float
-        Alpha parameter for the alpha-beta filter. A higher alpha value is more sensitive to changes in the measurements.
-    beta : float, optional
-        Beta parameter for the alpha-beta filter. A higher beta value is more sensitive to changes in the measurements.
-    x_0 : float, optional
-        Initial position of the object, by default 0.0
-    v_0 : float, optional
-        Initial velocity of the object, by default 0.0
-    dt : float, optional
-        Time step between frames (seconds), by default 1.0
+        Parameters
+        ----------
+        alpha : float
+            Alpha parameter for the alpha-beta filter. A higher alpha value is more sensitive to changes in the measurements.
+        beta : float, optional
+            Beta parameter for the alpha-beta filter. A higher beta value is more sensitive to changes in the measurements.
+        x_0 : float, optional
+            Initial x position of the object, by default 0.0
+        y_0 : float, optional
+            Initial y position of the object, by default 0.0
+        v_x_0 : float, optional
+            Initial x velocity of the object, by default 0.0
+        v_y_0 : float, optional
+            Initial y velocity of the object, by default 0.0
+        dt : float, optional
+            Time step between frames (seconds), by default 1.0
+        """
+        self.alpha = alpha
+        self.beta = beta
+        self.x_0 = x_0
+        self.y_0 = y_0
+        self.v_x_0 = v_x_0
+        self.v_y_0 = v_y_0
+        self.dt = dt
 
-    Returns
-    -------
-    corrected_coords : List[int]
-        List of cleaned and interpolated coordinates of the object.
-    """
+        # Initialize the state variables
+        self.x_k = self.x_0
+        self.v_x_k = self.v_x_0
+        self.y_k = self.y_0
+        self.v_y_k = self.v_y_0
 
-    # Initialize the state variables
-    x_k = x_0
-    v_k = v_0
+    def __call__(self, measurement: Tuple[int, int]) -> Tuple[int, int]:
+        """Returns the corrected 2D coordinates of the object.
 
-    # Initialize the corrected coordinates
-    corrected_coords = []
+        Parameters
+        ----------
+        measurement : Tuple[int, int]
+            2D coordinates of the object.
 
-    n = len(coords)
-
-    for i in range(n):
-        # Get the current measurement
-        z_k = coords[i]
-
+        Returns
+        -------
+        corrected_measurement : Tuple[int, int]
+            Corrected 2D coordinates of the object.
+        """
+        z_x_k, z_y_k = measurement
         # Calculate the predicted state
-        x_k = x_k + dt * v_k
-        v_k = v_k
+        self.x_k = self.x_k + self.dt * self.v_x_k
+        self.v_x_k = self.v_x_k
+
+        self.y_k = self.y_k + self.dt * self.v_y_k
+        self.v_y_k = self.v_y_k
 
         # If the measurement is not missing
-        if z_k != MISSING_VALUE:
+        if z_x_k != MISSING_VALUE:
             # Calculate the error
-            e_k = z_k - x_k
+            e_k = z_x_k - self.x_k
 
             # Update the state
-            x_k += alpha * e_k
-            v_k += (beta * e_k) / dt
+            self.x_k += self.alpha * e_k
+            self.v_x_k += (self.beta * e_k) / self.dt
 
-        # Append the corrected object coordinate
-        corrected_coords.append(int(x_k))
+        if z_y_k != MISSING_VALUE:
+            # Calculate the error
+            e_k = z_y_k - self.y_k
 
-    return corrected_coords
+            # Update the state
+            self.y_k += self.alpha * e_k
+            self.v_y_k += (self.beta * e_k) / self.dt
 
+        corrected_measurement = (int(self.x_k), int(self.y_k))
 
-def alpha_beta_filter_2d(
-    coords: cv2.typing.MatLike,
-    alpha: float,
-    beta: float,
-    x_0: float = 0.0,
-    y_0: float = 0.0,
-    v_x_0: float = 0.0,
-    v_y_0: float = 0.0,
-    dt: float = 1.0,
-) -> cv2.typing.MatLike:
-    """Cleans and interpolates the object coordinates using alpha-beta filter for 2D coordinates.
+        return corrected_measurement
 
-    Parameters
-    ----------
-    coords : List[List[int]]
-        List of 2D coordinates of object.
-    alpha : float
-        Alpha parameter for the alpha-beta filter. A higher alpha value is more sensitive to changes in the measurements.
-    alpha : float
-        Alpha parameter for the alpha-beta filter. A higher alpha value is more sensitive to changes in the measurements.
-    beta : float, optional
-        Beta parameter for the alpha-beta filter. A higher beta value is more sensitive to changes in the measurements.
-    x_0 : float, optional
-        Initial x position of the object, by default 0.0
-    y_0 : float, optional
-        Initial y position of the object, by default 0.0
-    v_x_0 : float, optional
-        Initial x velocity of the object, by default 0.0
-    v_y_0 : float, optional
-        Initial y velocity of the object, by default 0.0
-    dt : float, optional
-        Time step between frames (seconds), by default 1.0
+    def predict(self, measurements: cv2.typing.MatLike) -> cv2.typing.MatLike:
+        """Predicts the 2D coordinates of the object.
 
-    Returns
-    -------
-    corrected_coords : List[int]
-        List of cleaned and interpolated 2D coordinates of the object.
-    """
-    x_coords, y_coords = zip(*coords)
-    corrected_x_coords = alpha_beta_filter(x_coords, alpha, beta, x_0, v_x_0, dt)
-    corrected_y_coords = alpha_beta_filter(y_coords, alpha, beta, y_0, v_y_0, dt)
+        Parameters
+        ----------
+        measurements : cv2.typing.MatLike
+            Array of 2D coordinates of the object.
 
-    corrected_coords = []
-    for i in range(len(corrected_x_coords)):
-        corrected_coords.append([corrected_x_coords[i], corrected_y_coords[i]])
+        Returns
+        -------
+        predicted_measurements : cv2.typing.MatLike
+            Predicted 2D coordinates of the object.
+        """
+        predicted_measurements = np.zeros_like(measurements)
 
-    return np.array(corrected_coords)
+        for i, measurement in enumerate(measurements):
+            predicted_measurements[i] = self(measurement)
+
+        return predicted_measurements
