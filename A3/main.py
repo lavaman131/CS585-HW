@@ -56,9 +56,6 @@ if __name__ == "__main__":
         save_path="./data/submission/part_2_frame_dict.json",
     )
 
-    with open("./data/submission/part_2_frame_dict.json") as f:
-        bounding_boxes = json.load(f)
-
     draw_bounding_boxes_in_video(
         width=700,
         height=500,
