@@ -129,19 +129,18 @@ hydra:
   runtime:
     version: 1.3.2
     version_base: '1.3'
-    cwd: /Users/alilavaee/Library/CloudStorage/GoogleDrive-alavaee@bu.edu/My Drive/CS585/CS585-HW/A2
+    cwd: /Users/alilavaee/Documents/classes/CS585/CS585-HW/A2
     config_sources:
     - path: hydra.conf
       schema: pkg
       provider: hydra
-    - path: /Users/alilavaee/Library/CloudStorage/GoogleDrive-alavaee@bu.edu/My Drive/CS585/CS585-HW/A2/conf
+    - path: /Users/alilavaee/Documents/classes/CS585/CS585-HW/A2/conf
       schema: file
       provider: main
     - path: ''
       schema: structured
       provider: schema
-    output_dir: /Users/alilavaee/Library/CloudStorage/GoogleDrive-alavaee@bu.edu/My
-      Drive/CS585/CS585-HW/A2/experiments/demo
+    output_dir: /Users/alilavaee/Documents/classes/CS585/CS585-HW/A2/experiments/demo
     choices:
       hydra/env: default
       hydra/callbacks: null
