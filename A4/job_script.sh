@@ -1,19 +1,14 @@
 #!/bin/bash -l
 
-#$ -P cs585
-#$ -l h_rt=8:00:00
-#$ -m ea
-#$ -N j1
-#$ -j y
-#$ -o j1.out
-#$ -pe omp 8
-#$ -l gpus=1
-#$ -l gpu_c=3.5
+#$ -P dnn-motion                     # Specify the SCC project name you want to use
+#$ -l h_rt=24:00:00                  # Specify the hard time limit for the job
+#$ -l gpus=1                         # Specify the number of GPUs
+#$ -l gpu_memory=48G                 # Specify the amount of GPU memory
+#$ -N fcn_train                      # Give job a name
+#$ -j y                              # Merge the error and output streams into a single file
 
-### load your environment and run the job
+module load miniconda/23.5.2 cuda blender ffmpeg gcc llvm cmake
 
-# example:
-# module load miniconda/23.1.0
-# conda activate cls1
+conda activate fcn
 
-# python train.py
+python train.py
