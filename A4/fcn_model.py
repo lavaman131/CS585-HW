@@ -1,15 +1,23 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-from torchvision import models
+from pathlib import Path
+from typing import Union
+import torchvision.models as models
+from torchvision.transforms import v2
 
 
 class FCN8s(nn.Module):
-    def __init__(self, num_classes: int):
+    def __init__(
+        self, num_classes: int, vgg16_weights_path: Union[str, Path, None] = None
+    ):
         super(FCN8s, self).__init__()
 
         # Load the pretrained VGG-16 and use its features
-        vgg16 = models.vgg16(pretrained=True)
+        if vgg16_weights_path:
+            vgg16 = models.vgg16(weights=None)
+            vgg16.load_state_dict(torch.load(vgg16_weights_path))
+        else:
+            vgg16 = models.vgg16(weights=True)
         features = list(vgg16.features.children())
 
         # Encoder
@@ -58,8 +66,37 @@ class FCN8s(nn.Module):
 
         # Decoder
         upscore2 = self.upscore2(score)
-        upscore_pool4 = self.upscore_pool4(upscore2 + block4)
+        score_pool4 = self.score_pool4(block4)
+        fuse_pool4 = FCN8s.crop_and_add(score_pool4, upscore2)
+        upscore_pool4 = self.upscore_pool4(fuse_pool4)
         score_pool3 = self.score_pool3(block3)
-        upscore_final = self.upscore_final(score_pool3 + upscore_pool4)
+        fuse_pool3 = FCN8s.crop_and_add(score_pool3, upscore_pool4)
+
+        upscore_final = self.upscore_final(fuse_pool3)
 
         return upscore_final
+
+    @staticmethod
+    def crop_and_add(
+        tensor_to_crop: torch.Tensor, tensor_target: torch.Tensor
+    ) -> torch.Tensor:
+        """
+        Crop tensor_to_crop to match the size of tensor_target and then add them.
+        Assumes tensors are in the format [N, C, H, W].
+        """
+        size_target = tensor_target.size()[2:]
+        size_to_crop = tensor_to_crop.size()[2:]
+
+        # Calculate cropping start indices
+        start = [(stc - stt) // 2 for stc, stt in zip(size_to_crop, size_target)]
+
+        # Perform cropping
+        cropped_tensor = tensor_to_crop[
+            :,
+            :,
+            start[0] : (start[0] + size_target[0]),
+            start[1] : (start[1] + size_target[1]),
+        ]
+
+        # Add cropped tensor to target tensor
+        return cropped_tensor + tensor_target

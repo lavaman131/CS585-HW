@@ -9,13 +9,15 @@ from torch.utils.data import DataLoader
 import torch.nn.functional as F
 from torch import nn
 from typing import Tuple
+from pathlib import Path
 
 # Define the device
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+vgg16_weights_path = Path("/projectnb/ivc-ml/alavaee/model_weights/vgg16-397923af.pth")
 
 # Define the model
 num_classes = 32
-model = fcn_model.FCN8s(num_classes).to(device)
+model = fcn_model.FCN8s(num_classes, vgg16_weights_path).to(device)
 
 # Define the dataset and dataloader
 root = "/projectnb/ivc-ml/alavaee/data/CS585/CamVid"

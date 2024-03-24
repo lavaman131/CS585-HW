@@ -1,11 +1,9 @@
 import os
 import csv
 import torch
-from PIL import Image
 from torch.utils.data import Dataset
 import torchvision.io as vio
 from torchvision.transforms import v2
-import numpy as np
 from typing import List, Tuple, Dict, TypeAlias
 
 normalize = v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
