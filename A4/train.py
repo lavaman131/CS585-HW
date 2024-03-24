@@ -73,32 +73,29 @@ def loss_fn(outputs: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
     return F.cross_entropy(outputs, labels, reduction="mean")
 
 
-def calculate_pixel_accuracy(pred: torch.Tensor, target: torch.Tensor) -> float:
-    correct = (pred == target).sum().item()
-    total = target.numel()
+def calculate_pixel_accuracy(confusion_matrix: torch.Tensor) -> float:
+    correct = confusion_matrix.diag().sum().item()
+    total = confusion_matrix.sum().item()
     return correct / total
 
 
-def calculate_iu(
-    pred: torch.Tensor, target: torch.Tensor
-) -> Tuple[torch.Tensor, torch.Tensor]:
-    intersection = (pred & target).sum(dim=2)
-    union = (pred | target).sum(dim=2)
+def calculate_iu(confusion_matrix: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    intersection = confusion_matrix.diag()
+    union = confusion_matrix.sum(dim=0) + confusion_matrix.sum(dim=1) - intersection
     return intersection, union
 
 
-def calculate_mean_iou(
-    pred: torch.Tensor, target: torch.Tensor, num_classes: int
-) -> float:
-    intersection, union = calculate_iu(pred, target)
+def calculate_mean_iou(confusion_matrix: torch.Tensor, num_classes: int) -> float:
+    intersection, union = calculate_iu(confusion_matrix)
     iou = (intersection / union).sum().item()
     return iou / num_classes
 
 
-def calculate_frequency_weighted_iou(pred: torch.Tensor, target: torch.Tensor) -> float:
-    intersection, union = calculate_iu(pred, target)
-    # class_weights = target.sum(dim=(1, 2)) / target.numel()
-    return (iou * class_weights).sum().item()
+def calculate_frequency_weighted_iou(confusion_matrix: torch.Tensor) -> float:
+    intersection, union = calculate_iu(confusion_matrix)
+    frequency_iou = torch.sum(confusion_matrix.sum(dim=1) * intersection / union)
+    frequency_weighted_iou = (frequency_iou / confusion_matrix.sum()).item()
+    return frequency_weighted_iou
 
 
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -112,23 +109,23 @@ def eval_model(
 ):
     model.eval()
     loss_list = []
+    confusion_matrix = torch.zeros((num_classes, num_classes), dtype=torch.int64)
     if save_pred:
         pred_list = []
-        labels_list = []
     with torch.no_grad():
         for images, labels in dataloader:
             images, labels = images.to(device), labels.to(device)
-            outputs = model(images)
+            outputs = model(images)  # shape: (batch_size, num_classes, H, W)
             loss = loss_fn(outputs, labels)
             loss_list.append(loss.item())
-            _, predicted = torch.max(outputs, dim=1)
+            _, predicted = torch.max(outputs, dim=1)  # shape: (batch_size, H, W)
+            for t, p in zip(labels.view(-1), predicted.view(-1)):
+                confusion_matrix[t.long(), p.long()] += 1
             if save_pred:
                 pred_list.append(predicted.cpu().numpy())
-                labels_list.append(labels.cpu().numpy())
-            raise NotImplementedError("Implement the evaluation metrics")
-        # pixel_acc = ...
-        # mean_iou = ...
-        # freq_iou = ...
+        pixel_acc = calculate_pixel_accuracy(confusion_matrix)
+        mean_iou = calculate_mean_iou(confusion_matrix, num_classes)
+        freq_iou = calculate_frequency_weighted_iou(confusion_matrix)
         loss = sum(loss_list) / len(loss_list)
         print(
             "Pixel accuracy: {:.4f}, Mean IoU: {:.4f}, Frequency weighted IoU: {:.4f}, Loss: {:.4f}".format(
