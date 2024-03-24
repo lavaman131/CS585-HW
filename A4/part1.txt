@@ -1,0 +1,37 @@
+Explain the difference between the task of classification and segmentation, explain why there might be conflicts between the two tasks. (10 points)
+
+In the context of computer vision, classification involves predicting a single label that identifies the category or class of an image. On the other hand, semantic segmentation involves identify all types of objects in an image meaning there could be multiple labels associated with an image. Furthermore, instance segmentation attempts to offer a more granular level of classification than semantic classification by also identifying each of the classified objects into individual instances. Segmentation typically involves identifying per-pixel object categories. There might be conflicts between the two tasks since a classification system is designed to classify a single object in an image. This will mean if there are multiple objects of different classes in an image, a classification system will be more error prone since it was not designed for multi-object classification. So, if a single image contains multiple classes it makes more sense to use a segmentation approach. Additionally, a segmentation approach can still be effective in a traditional classification task. However, a disadvantage of segmentation is that it is often more difficult to train than a single label classification task on images.
+
+
+Introduce how FCN addresses the conflicts. Then introduce different versions of FCN, and explain how they balance the trade-off. (10 points)
+
+FCNs tackle the inherent conflicts within traditional classification models, which are primarily built for fixed-size inputs and struggle with spatial data continuity essential for tasks like image segmentation. Traditional methods rely on fully connected layers that lose spatial hierarchy, making them less suited for pixel-wise prediction. FCNs address these issues by leveraging a fully convolutional architecture, thereby enabling the model to output spatial heatmaps instead of scalar scores. This heatmap approach allows FCNs to maintain spatial information throughout the network, making them inherently more suitable for segmentation tasks. The adaptability of FCNs to input sizes is another significant advantage, offering the flexibility to process images of varying dimensions without resizing, which is a common limitation in classical approaches.
+
+To refine their approach and balance the trade-offs between accuracy and computational efficiency, the creators of FCNs proposed three distinct configurations: FCN-32s, FCN-16s, and FCN-8s. These configurations primarily differ in how they approach the upsampling process and integrate information from earlier in the network to achieve finer-resolution predictions.
+
+1. FCN-32s is the base model, using a stride of 32 to upsample the final layer's predictions back to the input image size. It directly upsamples the deep, coarse semantic information without combining intermediate layer outputs, making it faster but less precise in delineating boundaries.
+
+2. FCN-16s improves upon this by adding a skip connection that merges the predictions from the final layer with those from a mid-level layer, halving the stride to 16. This approach introduces additional mid-level semantic details back into the final prediction, striking a better balance between computational efficiency and the resolution of the output.
+
+3. FCN-8s further refines this model by incorporating even earlier features in the network, effectively reducing the upsampling stride to 8. By integrating fine-grained details from earlier in the network, FCN-8s offers the highest fidelity in capturing object boundaries and fine details, albeit at the cost of increased computational requirements.
+
+These configurations exemplify how FCNs can be tuned to balance the trade-off between the granularity of segmentation and the computational resources required. By selectively re-integrating features from earlier layers, FCNs can be adapted to a wide range of segmentation tasks, offering flexible solutions that can be tailored to the specific needs of the application.
+
+
+Compare the evaluation metrics of pixel accuracy and IU introduced in the paper. Also compare mean IU and frequency-weighted IU. (10 points)
+
+Pixel accuracy is a metric that calculates the accuracy by measuring the proportion of correctly classified pixels across all images and the number of pixels across all images. It gives us a high-level view of how often the model gets things right, without diving into the specifics of where it's accurate. On the other hand, IU, measures the intersection over union of a single predicted semantic region with the ground truth region covering the same area. IU takes a more nuanced approach in a sense compared to accuracy, indicating the performance of the model in correctly predicting regions.
+
+This straightforward metric measures the ratio of correctly predicted pixels to the total number of pixels across all images. It gives us a high-level view of how often the model gets things right, without diving into the specifics of where it's accurate.
+
+mean IU takes the idea of IU further and calculates the IU for all predicted regions across all images and summing the IUs up and dividing by the number of classes. Meanwhile, frequency-weighted IU scales the mean IU metric by weighting it by the number of pixels that belong to a certain class. Additionally, instead of taking the average of this sum, frequency weighted IU scales by the inverse of the number of pixels across all images (which corresponds to dividing the sum by the number of pixels across all images).
+
+Comment on the limitations of FCN and potential rough directions for further improvements. (10 extra credits)
+
+Some limitations of the original FCN are:
+
+1. Boundary Precision: Due to the nature of convolutional operations and the challenge of up-sampling to the original resolution, FCNs can sometimes produce less precise boundaries around objects. This lack of sharpness can particularly impact applications requiring high levels of detail, such as medical image analysis.
+
+2. Computational Intensity: Although FCNs marked a step forward in efficiency compared to previous segmentation approaches, the architecture can still be computationally intensive, especially when processing high-resolution images. This can limit its applicability in resource-constrained environments or real-time applications. In the original paper, the model required a pretrained VGG16 net backbone to be effective and fine-tuning took an additional couple of days.
+
+3. Feature Reuse Limitations: FCNs rely heavily on the reuse of features across different layers. While this is efficient, it can sometimes limit the network's ability to learn new and diverse features for different classes, especially in very heterogeneous datasets.
