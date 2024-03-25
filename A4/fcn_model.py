@@ -65,15 +65,18 @@ class VGG16(VGG):
         if self.pretrain_weights_path:
             model_state_dict = self.state_dict()
             pretrained_state_dict = torch.load(self.pretrain_weights_path)
+            new_state_dict = {}
             for key in pretrained_state_dict.keys():
                 # ignore 1000 classes
                 if "classifier.6" in key:
-                    pretrained_state_dict.pop(key)
+                    continue
                 elif "classifier" in key:
-                    pretrained_state_dict[key] = pretrained_state_dict[key].view(
+                    new_state_dict[key] = pretrained_state_dict[key].view(
                         model_state_dict[key].shape
                     )
-            self.load_state_dict(pretrained_state_dict, strict=False)
+                else:
+                    new_state_dict[key] = pretrained_state_dict[key]
+            self.load_state_dict(new_state_dict, strict=False)
 
     def forward(self, x: torch.Tensor) -> Dict[str, torch.Tensor]:
         output = {}
