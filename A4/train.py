@@ -10,14 +10,17 @@ import torch.nn.functional as F
 from torch import nn
 from typing import Tuple
 from pathlib import Path
+from torch.optim import Adam
 
 # Define the device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-vgg16_weights_path = Path("/projectnb/ivc-ml/alavaee/model_weights/vgg16-397923af.pth")
+pretrain_weights_path = Path(
+    "/projectnb/ivc-ml/alavaee/model_weights/vgg16-397923af.pth"
+)
 
 # Define the model
 num_classes = 32
-model = fcn_model.FCN8s(num_classes, vgg16_weights_path).to(device)
+model = fcn_model.FCN8s(num_classes, pretrain_weights_path).to(device)
 
 # Define the dataset and dataloader
 root = "/projectnb/ivc-ml/alavaee/data/CS585/CamVid"
@@ -81,26 +84,28 @@ def calculate_pixel_accuracy(confusion_matrix: torch.Tensor) -> float:
     return correct / total
 
 
-def calculate_iu(confusion_matrix: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+def calculate_iou(confusion_matrix: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
     intersection = confusion_matrix.diag()
     union = confusion_matrix.sum(dim=0) + confusion_matrix.sum(dim=1) - intersection
     return intersection, union
 
 
-def calculate_mean_iou(confusion_matrix: torch.Tensor, num_classes: int) -> float:
-    intersection, union = calculate_iu(confusion_matrix)
-    iou = (intersection / union).sum().item()
-    return iou / num_classes
+def calculate_mean_iou(confusion_matrix: torch.Tensor, epsilon: float = 1e-8) -> float:
+    intersection, union = calculate_iou(confusion_matrix)
+    iou = intersection / (union + epsilon)
+    return torch.mean(iou).item()
 
 
-def calculate_frequency_weighted_iou(confusion_matrix: torch.Tensor) -> float:
-    intersection, union = calculate_iu(confusion_matrix)
-    frequency_iou = torch.sum(confusion_matrix.sum(dim=1) * intersection / union)
-    frequency_weighted_iou = (frequency_iou / confusion_matrix.sum()).item()
-    return frequency_weighted_iou
+def calculate_frequency_weighted_iou(
+    confusion_matrix: torch.Tensor, epsilon: float = 1e-8
+) -> float:
+    intersection, union = calculate_iou(confusion_matrix)
+    iou = intersection / (union + epsilon)
+    frequency = confusion_matrix.sum(dim=1) / confusion_matrix.sum()
+    return (frequency * iou).sum().item()
 
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+optimizer = Adam(model.parameters(), lr=0.001)
 
 
 def eval_model(
@@ -111,7 +116,9 @@ def eval_model(
 ):
     model.eval()
     loss_list = []
-    confusion_matrix = torch.zeros((num_classes, num_classes), dtype=torch.int64)
+    confusion_matrix = torch.zeros(
+        (num_classes, num_classes), dtype=torch.int64, device=device
+    )
     if save_pred:
         pred_list = []
     with torch.no_grad():
@@ -121,12 +128,13 @@ def eval_model(
             loss = loss_fn(outputs, labels)
             loss_list.append(loss.item())
             _, predicted = torch.max(outputs, dim=1)  # shape: (batch_size, H, W)
-            for t, p in zip(labels.view(-1), predicted.view(-1)):
-                confusion_matrix[t.long(), p.long()] += 1
+            indices = (labels.view(-1), predicted.view(-1))
+            values = torch.ones_like(labels.view(-1), device=device)
+            confusion_matrix.index_put_(indices, values, accumulate=True)
             if save_pred:
                 pred_list.append(predicted.cpu().numpy())
         pixel_acc = calculate_pixel_accuracy(confusion_matrix)
-        mean_iou = calculate_mean_iou(confusion_matrix, num_classes)
+        mean_iou = calculate_mean_iou(confusion_matrix)
         freq_iou = calculate_frequency_weighted_iou(confusion_matrix)
         loss = sum(loss_list) / len(loss_list)
         print(
@@ -204,7 +212,6 @@ for epoch in range(num_epochs):
                 )
             )
             loss_list = []
-
     # eval the model
     eval_model(model, dataloader_val, device)
 

@@ -80,7 +80,7 @@ class CamVidDataset(Dataset):
         else:
             image, label = paired_resize(image, label, self.resolution)
 
-        label = self.rgb_to_class_id(label).long()
+        label = self.rgb_to_class_id(label)
         # normalize image
         image = normalize(image)
 
@@ -89,23 +89,25 @@ class CamVidDataset(Dataset):
     def parse_class_dict(self, class_dict_path: str) -> ClassDict:
         # return a dictionary that maps class id (0-31) to a tuple ((R,G,B), class_name)
         class_dict = {}
-        reader = csv.reader(open(class_dict_path, "r"), delimiter=",")
-        # skip the header
-        next(reader)
-        for i, row in enumerate(reader):
-            class_name = row[0]
-            r, g, b = row[1:4]
-            class_dict[i] = (
-                (int(r), int(g), int(b)),
-                class_name,
-            )
+        with open(class_dict_path, "r") as f:
+            reader = csv.reader(f, delimiter=",")
+            # skip the header
+            next(reader)
+            for i, row in enumerate(reader):
+                class_name = row[0]
+                r, g, b = row[1:4]
+                class_dict[i] = (
+                    (int(r), int(g), int(b)),
+                    class_name,
+                )
         return class_dict
 
     def rgb_to_class_id(self, label_img: torch.Tensor) -> torch.Tensor:
-        # Convert an RGB label image to a class ID image (3, H, W) -> (H, W)
-        label = torch.zeros(label_img.shape[1:])
-        for i in range(label_img.shape[1]):
-            for j in range(label_img.shape[2]):
-                rgb = tuple(label_img[:, i, j].tolist())
-                label[i, j] = self.rgb_to_class_id_dict[rgb]
+        # Convert an RGB label image to a class ID tensor (3, H, W) -> (H, W)
+        label = torch.zeros(label_img.shape[1:], dtype=torch.long)
+        for rgb, class_id in self.rgb_to_class_id_dict.items():
+            mask = (
+                label_img == torch.tensor(rgb, dtype=torch.uint8).view(3, 1, 1)
+            ).all(dim=0)
+            label[mask] = class_id
         return label
