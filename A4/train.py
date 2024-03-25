@@ -10,7 +10,10 @@ import torch.nn.functional as F
 from torch import nn
 from typing import Tuple
 from pathlib import Path
-from torch.optim import Adam
+from torch.optim import AdamW
+from lightning import seed_everything
+
+seed_everything(42)
 
 # Define the device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -29,7 +32,7 @@ labels_dir_train = "train_labels/"
 class_dict_path = "class_dict.csv"
 resolution = [384, 512]
 batch_size = 16
-num_epochs = 1
+num_epochs = 50
 
 
 camvid_dataset_train = fcn_dataset.CamVidDataset(
@@ -90,10 +93,10 @@ def calculate_iou(confusion_matrix: torch.Tensor) -> Tuple[torch.Tensor, torch.T
     return intersection, union
 
 
-def calculate_mean_iou(confusion_matrix: torch.Tensor, epsilon: float = 1e-8) -> float:
+def calculate_mean_iou(confusion_matrix: torch.Tensor) -> float:
     intersection, union = calculate_iou(confusion_matrix)
-    iou = intersection / (union + epsilon)
-    return torch.mean(iou).item()
+    iou = intersection / union
+    return torch.nanmean(iou).item()
 
 
 def calculate_frequency_weighted_iou(
@@ -105,7 +108,7 @@ def calculate_frequency_weighted_iou(
     return (frequency * iou).sum().item()
 
 
-optimizer = Adam(model.parameters(), lr=0.001)
+optimizer = AdamW(model.parameters(), lr=0.001)
 
 
 def eval_model(

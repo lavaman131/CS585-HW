@@ -129,6 +129,7 @@ class FCN8s(nn.Module):
         x5 = output["x5"]
         x4 = output["x4"]
         x3 = output["x3"]
+
         score_fr = self.vgg16.classifier(x5)
         upscore2 = self.upscore2(score_fr)
         score_pool4 = self.score_pool4(x4)
