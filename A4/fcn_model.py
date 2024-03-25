@@ -45,7 +45,11 @@ class VGG16(VGG):
             nn.ReLU(inplace=True),
             nn.MaxPool2d(2, stride=2, ceil_mode=True),
         )
-        super().__init__(features, num_classes=num_classes, init_weights=True)
+        super().__init__(
+            features,
+            num_classes=num_classes,
+            init_weights=pretrain_weights_path is None,
+        )
 
         self.pretrain_weights_path = pretrain_weights_path
 
