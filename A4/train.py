@@ -32,8 +32,8 @@ labels_dir_train = "train_labels/"
 class_dict_path = "class_dict.csv"
 resolution = [384, 512]
 batch_size = 16
-num_epochs = 50
-
+num_epochs = 200
+lr = 1e-4
 
 camvid_dataset_train = fcn_dataset.CamVidDataset(
     root=root,
@@ -108,7 +108,7 @@ def calculate_frequency_weighted_iou(
     return (frequency * iou).sum().item()
 
 
-optimizer = AdamW(model.parameters(), lr=1e-4)
+optimizer = AdamW(model.parameters(), lr=lr)
 
 
 def eval_model(
@@ -218,14 +218,14 @@ for epoch in range(num_epochs):
         loss_list.append(loss.item())
 
         if (i + 1) % 10 == 0:
-            mean_loss = sum(loss_list) / len(loss_list)
+            loss = sum(loss_list) / len(loss_list)
             print(
                 "Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}".format(
                     epoch + 1,
                     num_epochs,
                     i + 1,
                     len(dataloader_train),
-                    mean_loss,
+                    loss,
                 )
             )
             loss_list = []
