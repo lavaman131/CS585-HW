@@ -217,9 +217,8 @@ for epoch in range(num_epochs):
 
         loss_list.append(loss.item())
 
-        mean_loss = sum(loss_list) / len(loss_list)
-
         if (i + 1) % 10 == 0:
+            mean_loss = sum(loss_list) / len(loss_list)
             print(
                 "Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}".format(
                     epoch + 1,
