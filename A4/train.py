@@ -29,7 +29,7 @@ labels_dir_train = "train_labels/"
 class_dict_path = "class_dict.csv"
 resolution = [384, 512]
 batch_size = 16
-num_epochs = 50
+num_epochs = 1
 
 
 camvid_dataset_train = fcn_dataset.CamVidDataset(
@@ -165,7 +165,6 @@ def visualize_model(model, dataloader, device):
             images_vis = fcn_dataset.rev_normalize(images)
             # Save the images and labels
             img = images_vis[0].permute(1, 2, 0).cpu().numpy()
-            img = img * 255
             img = img.astype("uint8")
             label = labels[0].cpu().numpy()
             pred = predicted[0].cpu().numpy()
