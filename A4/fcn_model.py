@@ -45,7 +45,7 @@ class VGG16(VGG):
             nn.ReLU(inplace=True),
             nn.MaxPool2d(2, stride=2, ceil_mode=True),
         )
-        super().__init__(features, num_classes=num_classes, init_weights=False)
+        super().__init__(features, num_classes=num_classes, init_weights=True)
 
         self.pretrain_weights_path = pretrain_weights_path
 
@@ -65,18 +65,15 @@ class VGG16(VGG):
         if self.pretrain_weights_path:
             model_state_dict = self.state_dict()
             pretrained_state_dict = torch.load(self.pretrain_weights_path)
-            new_state_dict = {}
             for key in pretrained_state_dict.keys():
                 # ignore 1000 classes
                 if "classifier.6" in key:
-                    continue
+                    pretrained_state_dict.pop(key)
                 elif "classifier" in key:
-                    new_state_dict[key] = pretrained_state_dict[key].view(
+                    pretrained_state_dict[key] = pretrained_state_dict[key].view(
                         model_state_dict[key].shape
                     )
-                else:
-                    new_state_dict[key] = pretrained_state_dict[key]
-            self.load_state_dict(new_state_dict, strict=False)
+            self.load_state_dict(pretrained_state_dict, strict=False)
 
     def forward(self, x: torch.Tensor) -> Dict[str, torch.Tensor]:
         output = {}

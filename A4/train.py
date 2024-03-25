@@ -108,7 +108,7 @@ def calculate_frequency_weighted_iou(
     return (frequency * iou).sum().item()
 
 
-optimizer = AdamW(model.parameters(), lr=0.001)
+optimizer = AdamW(model.parameters(), lr=1e-4)
 
 
 def eval_model(
@@ -189,19 +189,35 @@ def visualize_model(model, dataloader, device):
 
 # Train the model
 loss_list = []
+scaler = torch.cuda.amp.GradScaler()
 for epoch in range(num_epochs):
     for i, (images, labels) in enumerate(dataloader_train):
         images, labels = images.to(device), labels.to(device)
 
         # Forward pass
         outputs = model(images)
-        loss = loss_fn(outputs, labels)
 
-        # Backward pass and optimize
+        # zero grad
         optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+
+        # Casts operations to mixed precision
+        with torch.cuda.amp.autocast():
+            loss = loss_fn(outputs, labels)
+
+        # Scales the loss, and calls backward()
+        # to create scaled gradients
+        scaler.scale(loss).backward()
+
+        # Unscales gradients and calls
+        # or skips optimizer.step()
+        scaler.step(optimizer)
+
+        # Updates the scale for next iteration
+        scaler.update()
+
         loss_list.append(loss.item())
+
+        mean_loss = sum(loss_list) / len(loss_list)
 
         if (i + 1) % 10 == 0:
             print(
@@ -210,7 +226,7 @@ for epoch in range(num_epochs):
                     num_epochs,
                     i + 1,
                     len(dataloader_train),
-                    sum(loss_list) / len(loss_list),
+                    mean_loss,
                 )
             )
             loss_list = []

@@ -1,206 +1,0 @@
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [1/50], Step [10/24], Loss: 10.8346
-Epoch [1/50], Step [20/24], Loss: 4.1631
-Pixel accuracy: 0.2453, Mean IoU: 0.0191, Frequency weighted IoU: 0.1254, Loss: 4.1739
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [2/50], Step [10/24], Loss: 2.6831
-Epoch [2/50], Step [20/24], Loss: 2.0840
-Pixel accuracy: 0.5262, Mean IoU: 0.0433, Frequency weighted IoU: 0.3152, Loss: 1.7892
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [3/50], Step [10/24], Loss: 1.7232
-Epoch [3/50], Step [20/24], Loss: 1.4921
-Pixel accuracy: 0.5602, Mean IoU: 0.0476, Frequency weighted IoU: 0.3421, Loss: 1.5828
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [4/50], Step [10/24], Loss: 1.4378
-Epoch [4/50], Step [20/24], Loss: 1.4271
-Pixel accuracy: 0.5682, Mean IoU: 0.0479, Frequency weighted IoU: 0.3498, Loss: 1.4721
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [5/50], Step [10/24], Loss: 1.3856
-Epoch [5/50], Step [20/24], Loss: 1.3574
-Pixel accuracy: 0.5830, Mean IoU: 0.0508, Frequency weighted IoU: 0.3639, Loss: 1.3738
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [6/50], Step [10/24], Loss: 1.3611
-Epoch [6/50], Step [20/24], Loss: 1.3191
-Pixel accuracy: 0.5332, Mean IoU: 0.0455, Frequency weighted IoU: 0.3420, Loss: 1.5146
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [7/50], Step [10/24], Loss: 1.4208
-Epoch [7/50], Step [20/24], Loss: 1.3279
-Pixel accuracy: 0.6029, Mean IoU: 0.0554, Frequency weighted IoU: 0.3902, Loss: 1.3134
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [8/50], Step [10/24], Loss: 1.2783
-Epoch [8/50], Step [20/24], Loss: 1.2682
-Pixel accuracy: 0.5471, Mean IoU: 0.0460, Frequency weighted IoU: 0.3332, Loss: 1.4079
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [9/50], Step [10/24], Loss: 1.3362
-Epoch [9/50], Step [20/24], Loss: 1.2924
-Pixel accuracy: 0.6035, Mean IoU: 0.0550, Frequency weighted IoU: 0.3856, Loss: 1.3968
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [10/50], Step [10/24], Loss: 1.3193
-Epoch [10/50], Step [20/24], Loss: 1.2703
-Pixel accuracy: 0.6077, Mean IoU: 0.0621, Frequency weighted IoU: 0.4053, Loss: 1.2966
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [11/50], Step [10/24], Loss: 1.2628
-Epoch [11/50], Step [20/24], Loss: 1.2649
-Pixel accuracy: 0.6169, Mean IoU: 0.0611, Frequency weighted IoU: 0.4108, Loss: 1.2600
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [12/50], Step [10/24], Loss: 1.2478
-Epoch [12/50], Step [20/24], Loss: 1.2663
-Pixel accuracy: 0.6210, Mean IoU: 0.0672, Frequency weighted IoU: 0.4255, Loss: 1.2501
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [13/50], Step [10/24], Loss: 1.2476
-Epoch [13/50], Step [20/24], Loss: 1.2448
-Pixel accuracy: 0.6044, Mean IoU: 0.0603, Frequency weighted IoU: 0.4045, Loss: 1.2639
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [14/50], Step [10/24], Loss: 1.2263
-Epoch [14/50], Step [20/24], Loss: 1.2068
-Pixel accuracy: 0.6155, Mean IoU: 0.0593, Frequency weighted IoU: 0.4076, Loss: 1.2402
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [15/50], Step [10/24], Loss: 1.2107
-Epoch [15/50], Step [20/24], Loss: 1.2710
-Pixel accuracy: 0.5997, Mean IoU: 0.0709, Frequency weighted IoU: 0.4230, Loss: 1.2538
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [16/50], Step [10/24], Loss: 1.1997
-Epoch [16/50], Step [20/24], Loss: 1.1898
-Pixel accuracy: 0.6436, Mean IoU: 0.0728, Frequency weighted IoU: 0.4476, Loss: 1.2228
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [17/50], Step [10/24], Loss: 1.1715
-Epoch [17/50], Step [20/24], Loss: 1.2055
-Pixel accuracy: 0.5686, Mean IoU: 0.0586, Frequency weighted IoU: 0.3702, Loss: 1.3554
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [18/50], Step [10/24], Loss: 1.2521
-Epoch [18/50], Step [20/24], Loss: 1.2451
-Pixel accuracy: 0.6318, Mean IoU: 0.0718, Frequency weighted IoU: 0.4461, Loss: 1.1968
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [19/50], Step [10/24], Loss: 1.1989
-Epoch [19/50], Step [20/24], Loss: 1.1663
-Pixel accuracy: 0.6487, Mean IoU: 0.0717, Frequency weighted IoU: 0.4476, Loss: 1.1737
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [20/50], Step [10/24], Loss: 1.2186
-Epoch [20/50], Step [20/24], Loss: 1.2672
-Pixel accuracy: 0.6177, Mean IoU: 0.0674, Frequency weighted IoU: 0.4293, Loss: 1.2643
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [21/50], Step [10/24], Loss: 1.2099
-Epoch [21/50], Step [20/24], Loss: 1.2053
-Pixel accuracy: 0.6361, Mean IoU: 0.0679, Frequency weighted IoU: 0.4321, Loss: 1.2027
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [22/50], Step [10/24], Loss: 1.2240
-Epoch [22/50], Step [20/24], Loss: 1.1739
-Pixel accuracy: 0.6392, Mean IoU: 0.0762, Frequency weighted IoU: 0.4551, Loss: 1.2049
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [23/50], Step [10/24], Loss: 1.2281
-Epoch [23/50], Step [20/24], Loss: 1.1659
-Pixel accuracy: 0.6306, Mean IoU: 0.0689, Frequency weighted IoU: 0.4323, Loss: 1.1933
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [24/50], Step [10/24], Loss: 1.1507
-Epoch [24/50], Step [20/24], Loss: 1.1672
-Pixel accuracy: 0.6646, Mean IoU: 0.0754, Frequency weighted IoU: 0.4675, Loss: 1.1473
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [25/50], Step [10/24], Loss: 1.1794
-Epoch [25/50], Step [20/24], Loss: 1.1935
-Pixel accuracy: 0.6525, Mean IoU: 0.0757, Frequency weighted IoU: 0.4622, Loss: 1.1391
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [26/50], Step [10/24], Loss: 1.1383
-Epoch [26/50], Step [20/24], Loss: 1.1370
-Pixel accuracy: 0.6725, Mean IoU: 0.0824, Frequency weighted IoU: 0.4797, Loss: 1.1394
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [27/50], Step [10/24], Loss: 1.2036
-Epoch [27/50], Step [20/24], Loss: 1.1777
-Pixel accuracy: 0.5708, Mean IoU: 0.0588, Frequency weighted IoU: 0.3843, Loss: 1.5176
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [28/50], Step [10/24], Loss: 1.2657
-Epoch [28/50], Step [20/24], Loss: 1.1934
-Pixel accuracy: 0.6604, Mean IoU: 0.0867, Frequency weighted IoU: 0.4958, Loss: 1.1825
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [29/50], Step [10/24], Loss: 1.1593
-Epoch [29/50], Step [20/24], Loss: 1.1912
-Pixel accuracy: 0.6271, Mean IoU: 0.0731, Frequency weighted IoU: 0.4350, Loss: 1.2455
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [30/50], Step [10/24], Loss: 1.2148
-Epoch [30/50], Step [20/24], Loss: 1.1346
-Pixel accuracy: 0.6078, Mean IoU: 0.0728, Frequency weighted IoU: 0.4497, Loss: 1.5029
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [31/50], Step [10/24], Loss: 1.2449
-Epoch [31/50], Step [20/24], Loss: 1.1459
-Pixel accuracy: 0.6746, Mean IoU: 0.0882, Frequency weighted IoU: 0.4937, Loss: 1.1067
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [32/50], Step [10/24], Loss: 1.1328
-Epoch [32/50], Step [20/24], Loss: 1.0565
-Pixel accuracy: 0.6869, Mean IoU: 0.0924, Frequency weighted IoU: 0.5079, Loss: 1.0692
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [33/50], Step [10/24], Loss: 1.0488
-Epoch [33/50], Step [20/24], Loss: 1.0492
-Pixel accuracy: 0.6394, Mean IoU: 0.0831, Frequency weighted IoU: 0.4590, Loss: 1.1566
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [34/50], Step [10/24], Loss: 1.1158
-Epoch [34/50], Step [20/24], Loss: 1.0531
-Pixel accuracy: 0.7023, Mean IoU: 0.0996, Frequency weighted IoU: 0.5241, Loss: 1.0239
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [35/50], Step [10/24], Loss: 0.9958
-Epoch [35/50], Step [20/24], Loss: 0.9776
-Pixel accuracy: 0.7134, Mean IoU: 0.1130, Frequency weighted IoU: 0.5619, Loss: 1.0313
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [36/50], Step [10/24], Loss: 0.9794
-Epoch [36/50], Step [20/24], Loss: 0.9672
-Pixel accuracy: 0.7269, Mean IoU: 0.1230, Frequency weighted IoU: 0.5790, Loss: 0.9674
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [37/50], Step [10/24], Loss: 0.8939
-Epoch [37/50], Step [20/24], Loss: 0.9120
-Pixel accuracy: 0.7549, Mean IoU: 0.1324, Frequency weighted IoU: 0.6038, Loss: 0.8651
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [38/50], Step [10/24], Loss: 0.8497
-Epoch [38/50], Step [20/24], Loss: 0.8974
-Pixel accuracy: 0.7461, Mean IoU: 0.1358, Frequency weighted IoU: 0.5910, Loss: 0.9163
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [39/50], Step [10/24], Loss: 0.9188
-Epoch [39/50], Step [20/24], Loss: 0.8162
-Pixel accuracy: 0.7671, Mean IoU: 0.1469, Frequency weighted IoU: 0.6300, Loss: 0.8338
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [40/50], Step [10/24], Loss: 0.8072
-Epoch [40/50], Step [20/24], Loss: 0.8086
-Pixel accuracy: 0.7712, Mean IoU: 0.1499, Frequency weighted IoU: 0.6299, Loss: 0.8290
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [41/50], Step [10/24], Loss: 0.7981
-Epoch [41/50], Step [20/24], Loss: 0.7965
-Pixel accuracy: 0.7836, Mean IoU: 0.1690, Frequency weighted IoU: 0.6489, Loss: 0.7808
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [42/50], Step [10/24], Loss: 0.7552
-Epoch [42/50], Step [20/24], Loss: 0.7223
-Pixel accuracy: 0.7896, Mean IoU: 0.1664, Frequency weighted IoU: 0.6506, Loss: 0.7526
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [43/50], Step [10/24], Loss: 0.6867
-Epoch [43/50], Step [20/24], Loss: 0.7094
-Pixel accuracy: 0.7792, Mean IoU: 0.1649, Frequency weighted IoU: 0.6479, Loss: 0.7878
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [44/50], Step [10/24], Loss: 0.7188
-Epoch [44/50], Step [20/24], Loss: 0.7411
-Pixel accuracy: 0.7911, Mean IoU: 0.1745, Frequency weighted IoU: 0.6563, Loss: 0.7474
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [45/50], Step [10/24], Loss: 0.7076
-Epoch [45/50], Step [20/24], Loss: 0.6690
-Pixel accuracy: 0.7989, Mean IoU: 0.1824, Frequency weighted IoU: 0.6708, Loss: 0.7428
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [46/50], Step [10/24], Loss: 0.7609
-Epoch [46/50], Step [20/24], Loss: 0.6623
-Pixel accuracy: 0.8064, Mean IoU: 0.1784, Frequency weighted IoU: 0.6812, Loss: 0.6946
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [47/50], Step [10/24], Loss: 0.6344
-Epoch [47/50], Step [20/24], Loss: 0.6223
-Pixel accuracy: 0.7917, Mean IoU: 0.1846, Frequency weighted IoU: 0.6707, Loss: 0.7718
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [48/50], Step [10/24], Loss: 0.6669
-Epoch [48/50], Step [20/24], Loss: 0.6162
-Pixel accuracy: 0.7912, Mean IoU: 0.1695, Frequency weighted IoU: 0.6630, Loss: 0.7660
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [49/50], Step [10/24], Loss: 0.6379
-Epoch [49/50], Step [20/24], Loss: 0.6073
-Pixel accuracy: 0.8049, Mean IoU: 0.1828, Frequency weighted IoU: 0.6805, Loss: 0.7002
-libpng warning: iCCP: known incorrect sRGB profile
-Epoch [50/50], Step [10/24], Loss: 0.5825
-Epoch [50/50], Step [20/24], Loss: 0.6078
-Pixel accuracy: 0.8161, Mean IoU: 0.1971, Frequency weighted IoU: 0.6903, Loss: 0.6690
-====================
-Finished Training, evaluating the model on the test set
-Pixel accuracy: 0.7776, Mean IoU: 0.1740, Frequency weighted IoU: 0.6384, Loss: 0.8025
-====================
-Visualizing the model on the test set, the results will be saved in the vis/ directory
-  0%|          | 0/232 [00:00<?, ?it/s]  0%|          | 1/232 [00:00<01:55,  2.00it/s]  1%|▏         | 3/232 [00:00<00:45,  5.07it/s]  2%|▏         | 5/232 [00:00<00:32,  7.08it/s]  3%|▎         | 7/232 [00:01<00:26,  8.42it/s]  4%|▍         | 9/232 [00:01<00:23,  9.37it/s]  5%|▍         | 11/232 [00:01<00:22,  9.78it/s]  6%|▌         | 13/232 [00:01<00:21, 10.10it/s]  6%|▋         | 15/232 [00:01<00:21, 10.29it/s]  7%|▋         | 17/232 [00:01<00:20, 10.41it/s]  8%|▊         | 19/232 [00:02<00:20, 10.53it/s]  9%|▉         | 21/232 [00:02<00:19, 10.71it/s] 10%|▉         | 23/232 [00:02<00:19, 10.89it/s] 11%|█         | 25/232 [00:02<00:18, 11.12it/s] 12%|█▏        | 27/232 [00:02<00:18, 11.17it/s] 12%|█▎        | 29/232 [00:03<00:17, 11.37it/s] 13%|█▎        | 31/232 [00:03<00:17, 11.52it/s] 14%|█▍        | 33/232 [00:03<00:17, 11.61it/s] 15%|█▌        | 35/232 [00:03<00:16, 11.67it/s] 16%|█▌        | 37/232 [00:03<00:16, 11.66it/s] 17%|█▋        | 39/232 [00:03<00:16, 11.66it/s] 18%|█▊        | 41/232 [00:04<00:16, 11.75it/s] 19%|█▊        | 43/232 [00:04<00:15, 11.89it/s] 19%|█▉        | 45/232 [00:04<00:15, 11.88it/s] 20%|██        | 47/232 [00:04<00:15, 11.79it/s] 21%|██        | 49/232 [00:04<00:15, 11.72it/s] 22%|██▏       | 51/232 [00:04<00:15, 11.66it/s] 23%|██▎       | 53/232 [00:05<00:15, 11.66it/s] 24%|██▎       | 55/232 [00:05<00:15, 11.70it/s] 25%|██▍       | 57/232 [00:05<00:14, 11.67it/s] 25%|██▌       | 59/232 [00:05<00:14, 11.65it/s] 26%|██▋       | 61/232 [00:05<00:14, 11.57it/s] 27%|██▋       | 63/232 [00:05<00:14, 11.48it/s] 28%|██▊       | 65/232 [00:06<00:14, 11.61it/s] 29%|██▉       | 67/232 [00:06<00:14, 11.56it/s] 30%|██▉       | 69/232 [00:06<00:14, 11.54it/s] 31%|███       | 71/232 [00:06<00:14, 11.46it/s] 31%|███▏      | 73/232 [00:06<00:13, 11.43it/s] 32%|███▏      | 75/232 [00:06<00:13, 11.46it/s] 33%|███▎      | 77/232 [00:07<00:13, 11.55it/s] 34%|███▍      | 79/232 [00:07<00:13, 11.59it/s] 35%|███▍      | 81/232 [00:07<00:13, 11.48it/s] 36%|███▌      | 83/232 [00:07<00:12, 11.55it/s] 37%|███▋      | 85/232 [00:07<00:12, 11.62it/s] 38%|███▊      | 87/232 [00:07<00:12, 11.66it/s] 38%|███▊      | 89/232 [00:08<00:12, 11.63it/s] 39%|███▉      | 91/232 [00:08<00:12, 11.72it/s] 40%|████      | 93/232 [00:08<00:11, 11.73it/s] 41%|████      | 95/232 [00:08<00:11, 11.74it/s] 42%|████▏     | 97/232 [00:08<00:11, 11.73it/s] 43%|████▎     | 99/232 [00:09<00:11, 11.84it/s] 44%|████▎     | 101/232 [00:09<00:10, 12.00it/s] 44%|████▍     | 103/232 [00:09<00:10, 11.99it/s] 45%|████▌     | 105/232 [00:09<00:10, 12.05it/s] 46%|████▌     | 107/232 [00:09<00:10, 12.17it/s] 47%|████▋     | 109/232 [00:09<00:09, 12.40it/s] 48%|████▊     | 111/232 [00:09<00:09, 12.46it/s] 49%|████▊     | 113/232 [00:10<00:09, 12.29it/s] 50%|████▉     | 115/232 [00:10<00:09, 12.06it/s] 50%|█████     | 117/232 [00:10<00:09, 12.06it/s] 51%|█████▏    | 119/232 [00:10<00:09, 12.03it/s] 52%|█████▏    | 121/232 [00:10<00:09, 12.08it/s] 53%|█████▎    | 123/232 [00:10<00:09, 12.10it/s] 54%|█████▍    | 125/232 [00:11<00:08, 12.10it/s] 55%|█████▍    | 127/232 [00:11<00:08, 12.01it/s] 56%|█████▌    | 129/232 [00:11<00:08, 12.01it/s] 56%|█████▋    | 131/232 [00:11<00:08, 11.99it/s] 57%|█████▋    | 133/232 [00:11<00:08, 11.93it/s] 58%|█████▊    | 135/232 [00:11<00:08, 12.04it/s] 59%|█████▉    | 137/232 [00:12<00:07, 12.17it/s] 60%|█████▉    | 139/232 [00:12<00:07, 12.25it/s] 61%|██████    | 141/232 [00:12<00:07, 12.25it/s] 62%|██████▏   | 143/232 [00:12<00:07, 12.32it/s] 62%|██████▎   | 145/232 [00:12<00:07, 12.33it/s] 63%|██████▎   | 147/232 [00:12<00:06, 12.21it/s] 64%|██████▍   | 149/232 [00:13<00:06, 12.23it/s] 65%|██████▌   | 151/232 [00:13<00:06, 12.24it/s] 66%|██████▌   | 153/232 [00:13<00:06, 12.08it/s] 67%|██████▋   | 155/232 [00:13<00:06, 12.05it/s] 68%|██████▊   | 157/232 [00:13<00:06, 11.91it/s] 69%|██████▊   | 159/232 [00:13<00:06, 11.84it/s] 69%|██████▉   | 161/232 [00:14<00:06, 11.71it/s] 70%|███████   | 163/232 [00:14<00:05, 11.70it/s] 71%|███████   | 165/232 [00:14<00:05, 11.67it/s] 72%|███████▏  | 167/232 [00:14<00:05, 11.65it/s] 73%|███████▎  | 169/232 [00:14<00:05, 11.64it/s] 74%|███████▎  | 171/232 [00:15<00:05, 11.58it/s] 75%|███████▍  | 173/232 [00:15<00:05, 11.58it/s] 75%|███████▌  | 175/232 [00:15<00:04, 11.53it/s] 76%|███████▋  | 177/232 [00:15<00:04, 11.49it/s] 77%|███████▋  | 179/232 [00:15<00:04, 11.44it/s] 78%|███████▊  | 181/232 [00:15<00:04, 11.44it/s] 79%|███████▉  | 183/232 [00:16<00:04, 11.47it/s] 80%|███████▉  | 185/232 [00:16<00:04, 11.58it/s] 81%|████████  | 187/232 [00:16<00:03, 11.73it/s] 81%|████████▏ | 189/232 [00:16<00:03, 11.71it/s] 82%|████████▏ | 191/232 [00:16<00:03, 11.75it/s] 83%|████████▎ | 193/232 [00:16<00:03, 11.91it/s] 84%|████████▍ | 195/232 [00:17<00:03, 12.01it/s] 85%|████████▍ | 197/232 [00:17<00:02, 12.11it/s] 86%|████████▌ | 199/232 [00:17<00:02, 12.12it/s] 87%|████████▋ | 201/232 [00:17<00:02, 12.12it/s] 88%|████████▊ | 203/232 [00:17<00:02, 12.01it/s] 88%|████████▊ | 205/232 [00:17<00:02, 11.89it/s] 89%|████████▉ | 207/232 [00:18<00:02, 11.83it/s] 90%|█████████ | 209/232 [00:18<00:01, 11.85it/s] 91%|█████████ | 211/232 [00:18<00:01, 11.82it/s] 92%|█████████▏| 213/232 [00:18<00:01, 11.88it/s] 93%|█████████▎| 215/232 [00:18<00:01, 11.97it/s] 94%|█████████▎| 217/232 [00:18<00:01, 12.01it/s] 94%|█████████▍| 219/232 [00:19<00:01, 12.35it/s] 95%|█████████▌| 221/232 [00:19<00:00, 12.51it/s] 96%|█████████▌| 223/232 [00:19<00:00, 12.58it/s] 97%|█████████▋| 225/232 [00:19<00:00, 12.65it/s] 98%|█████████▊| 227/232 [00:19<00:00, 12.64it/s] 99%|█████████▊| 229/232 [00:19<00:00, 12.71it/s]100%|█████████▉| 231/232 [00:19<00:00, 12.83it/s]100%|██████████| 232/232 [00:20<00:00, 11.55it/s]
