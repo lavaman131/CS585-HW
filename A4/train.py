@@ -10,7 +10,7 @@ import torch.nn.functional as F
 from torch import nn
 from typing import Tuple
 from pathlib import Path
-from torch.optim import AdamW
+from torch.optim import Adam
 from lightning import seed_everything
 
 seed_everything(42)
@@ -32,8 +32,9 @@ labels_dir_train = "train_labels/"
 class_dict_path = "class_dict.csv"
 resolution = [384, 512]
 batch_size = 16
-num_epochs = 200
-lr = 1e-4
+num_epochs = 50
+lr = 1e-3
+ignore_index = 30
 
 camvid_dataset_train = fcn_dataset.CamVidDataset(
     root=root,
@@ -77,8 +78,10 @@ dataloader_test = DataLoader(
 
 
 # Define the loss function and optimizer
-def loss_fn(outputs: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
-    return F.cross_entropy(outputs, labels, reduction="mean")
+def loss_fn(
+    outputs: torch.Tensor, labels: torch.Tensor, ignore_index: int = -100
+) -> torch.Tensor:
+    return F.cross_entropy(outputs, labels, ignore_index=ignore_index, reduction="mean")
 
 
 def calculate_pixel_accuracy(confusion_matrix: torch.Tensor) -> float:
@@ -108,7 +111,7 @@ def calculate_frequency_weighted_iou(
     return (frequency * iou).sum().item()
 
 
-optimizer = AdamW(model.parameters(), lr=lr)
+optimizer = Adam(model.parameters(), lr=lr)
 
 
 def eval_model(
@@ -128,7 +131,7 @@ def eval_model(
         for images, labels in dataloader:
             images, labels = images.to(device), labels.to(device)
             outputs = model(images)  # shape: (batch_size, num_classes, H, W)
-            loss = loss_fn(outputs, labels)
+            loss = loss_fn(outputs, labels, ignore_index=ignore_index)
             loss_list.append(loss.item())
             _, predicted = torch.max(outputs, dim=1)  # shape: (batch_size, H, W)
             indices = (labels.view(-1), predicted.view(-1))
@@ -189,7 +192,6 @@ def visualize_model(model, dataloader, device):
 
 # Train the model
 loss_list = []
-scaler = torch.cuda.amp.GradScaler()
 for epoch in range(num_epochs):
     for i, (images, labels) in enumerate(dataloader_train):
         images, labels = images.to(device), labels.to(device)
@@ -200,20 +202,11 @@ for epoch in range(num_epochs):
         # zero grad
         optimizer.zero_grad()
 
-        # Casts operations to mixed precision
-        with torch.cuda.amp.autocast():
-            loss = loss_fn(outputs, labels)
+        loss = loss_fn(outputs, labels)
 
-        # Scales the loss, and calls backward()
-        # to create scaled gradients
-        scaler.scale(loss).backward()
+        loss.backward()
 
-        # Unscales gradients and calls
-        # or skips optimizer.step()
-        scaler.step(optimizer)
-
-        # Updates the scale for next iteration
-        scaler.update()
+        optimizer.step()
 
         loss_list.append(loss.item())
 

@@ -111,3 +111,22 @@ class CamVidDataset(Dataset):
             ).all(dim=0)
             label[mask] = class_id
         return label
+
+
+if __name__ == "__main__":
+    root = "/projectnb/ivc-ml/alavaee/data/CS585/CamVid"
+    images_dir_train = "train/"
+    labels_dir_train = "train_labels/"
+    class_dict_path = "class_dict.csv"
+    resolution = [384, 512]
+
+    camvid_dataset_train = CamVidDataset(
+        root=root,
+        images_dir=images_dir_train,
+        labels_dir=labels_dir_train,
+        class_dict_path=class_dict_path,
+        resolution=resolution,
+        crop=True,
+    )
+
+    print(camvid_dataset_train.class_dict)

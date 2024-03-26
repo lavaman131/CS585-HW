@@ -2,95 +2,7 @@ import torch
 import torch.nn as nn
 from pathlib import Path
 from typing import Union
-from torchvision.models import VGG
-from typing import Dict
-
-
-class VGG16(VGG):
-    BLOCK_RANGES = ((0, 5), (5, 10), (10, 17), (17, 24), (24, 31))
-
-    def __init__(
-        self, num_classes: int, pretrain_weights_path: Union[str, Path, None]
-    ) -> None:
-        features = nn.Sequential(
-            nn.Conv2d(3, 64, 3, padding=100),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(64, 64, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(2, stride=2, ceil_mode=True),
-            nn.Conv2d(64, 128, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(128, 128, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(2, stride=2, ceil_mode=True),
-            nn.Conv2d(128, 256, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(256, 256, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(256, 256, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(2, stride=2, ceil_mode=True),
-            nn.Conv2d(256, 512, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(512, 512, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(512, 512, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(2, stride=2, ceil_mode=True),
-            nn.Conv2d(512, 512, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(512, 512, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(512, 512, 3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(2, stride=2, ceil_mode=True),
-        )
-        super().__init__(
-            features,
-            num_classes=num_classes,
-            init_weights=pretrain_weights_path is None,
-        )
-
-        self.pretrain_weights_path = pretrain_weights_path
-
-        self.classifier = nn.Sequential(
-            nn.Conv2d(512, 4096, 7),
-            nn.ReLU(inplace=True),
-            nn.Dropout2d(),
-            nn.Conv2d(4096, 4096, 1),
-            nn.ReLU(inplace=True),
-            nn.Dropout2d(),
-            nn.Conv2d(4096, num_classes, 1),
-        )
-
-        self._init_weights()
-
-    def _init_weights(self) -> None:
-        if self.pretrain_weights_path:
-            model_state_dict = self.state_dict()
-            pretrained_state_dict = torch.load(self.pretrain_weights_path)
-            new_state_dict = {}
-            for key in pretrained_state_dict.keys():
-                # ignore 1000 classes
-                if "classifier.6" in key:
-                    continue
-                elif "classifier" in key:
-                    new_state_dict[key] = pretrained_state_dict[key].view(
-                        model_state_dict[key].shape
-                    )
-                else:
-                    new_state_dict[key] = pretrained_state_dict[key]
-            self.load_state_dict(new_state_dict, strict=False)
-
-    def forward(self, x: torch.Tensor) -> Dict[str, torch.Tensor]:
-        output = {}
-
-        for idx in range(len(VGG16.BLOCK_RANGES)):
-            for layer in range(VGG16.BLOCK_RANGES[idx][0], VGG16.BLOCK_RANGES[idx][1]):
-                x = self.features[layer](x)  # type: ignore
-            output[f"x{(idx + 1)}"] = x
-
-        return output
+from torchvision import models
 
 
 class FCN8s(nn.Module):
@@ -101,58 +13,79 @@ class FCN8s(nn.Module):
     ) -> None:
         super().__init__()
 
-        self.vgg16 = VGG16(num_classes, pretrain_weights_path)
+        # Load the pretrained VGG-16 and use its features
+        if pretrain_weights_path:
+            vgg16 = models.vgg16(weights=None)
+            vgg16.load_state_dict(torch.load(pretrain_weights_path))
+        else:
+            vgg16 = models.vgg16(weights=models.VGG16_Weights.DEFAULT)
+        features = list(vgg16.features.children())
 
-        self.score_pool3 = nn.Conv2d(256, num_classes, 1)
-        self.score_pool4 = nn.Conv2d(512, num_classes, 1)
+        # Encoder
+        self.features_block1 = nn.Sequential(*features[:5])  # First pooling
+        self.features_block2 = nn.Sequential(*features[5:10])  # Second pooling
+        self.features_block3 = nn.Sequential(*features[10:17])  # Third pooling
+        self.features_block4 = nn.Sequential(*features[17:24])  # Fourth pooling
+        self.features_block5 = nn.Sequential(*features[24:])  # Fifth pooling
 
-        self.upscore2 = nn.ConvTranspose2d(
-            in_channels=num_classes,
-            out_channels=num_classes,
-            kernel_size=4,
-            stride=2,
-            bias=False,
+        # Modify the classifier part of VGG-16
+        self.classifier = nn.Sequential(
+            nn.Conv2d(512, 4096, kernel_size=7, padding=3),
+            nn.ReLU(inplace=True),
+            nn.Dropout2d(),
+            nn.Conv2d(4096, 4096, kernel_size=1),
+            nn.ReLU(inplace=True),
+            nn.Dropout2d(),
+            nn.Conv2d(4096, num_classes, kernel_size=1),
         )
-        self.upscore8 = nn.ConvTranspose2d(
-            in_channels=num_classes,
-            out_channels=num_classes,
-            kernel_size=16,
-            stride=8,
-            bias=False,
+
+        # Decoder
+        self.upscore2 = nn.ConvTranspose2d(
+            num_classes, num_classes, kernel_size=4, stride=2, bias=False
         )
         self.upscore_pool4 = nn.ConvTranspose2d(
-            in_channels=num_classes,
-            out_channels=num_classes,
-            kernel_size=4,
-            stride=2,
-            bias=False,
+            num_classes, num_classes, kernel_size=4, stride=2, bias=False
+        )
+        self.upscore_final = nn.ConvTranspose2d(
+            num_classes, num_classes, kernel_size=16, stride=8, bias=False
         )
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        output = self.vgg16(x)
-        x5 = output["x5"]
-        x4 = output["x4"]
-        x3 = output["x3"]
+        # Skip connections
+        self.score_pool4 = nn.Conv2d(512, num_classes, kernel_size=1)
+        self.score_pool3 = nn.Conv2d(256, num_classes, kernel_size=1)
 
-        score_fr = self.vgg16.classifier(x5)
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x1 = self.features_block1(x)
+        x2 = self.features_block2(x1)
+        x3 = self.features_block3(x2)
+        x4 = self.features_block4(x3)
+        x5 = self.features_block5(x4)
+
+        score_fr = self.classifier(x5)
         upscore2 = self.upscore2(score_fr)
         score_pool4 = self.score_pool4(x4)
-        score_pool4c = score_pool4[
-            :, :, 5 : 5 + upscore2.size()[2], 5 : 5 + upscore2.size()[3]
-        ]
-        fuse_pool4 = upscore2 + score_pool4c
+        upscore2c = FCN8s.crop(upscore2, score_pool4.size())
+        fuse_pool4 = upscore2c + score_pool4
         upscore_pool4 = self.upscore_pool4(fuse_pool4)
         score_pool3 = self.score_pool3(x3)
-        score_pool3c = score_pool3[
-            :, :, 9 : 9 + upscore_pool4.size()[2], 9 : 9 + upscore_pool4.size()[3]
-        ]
+        score_pool3c = FCN8s.crop(score_pool3, upscore_pool4.size())
         fuse_pool3 = upscore_pool4 + score_pool3c
-        upscore8 = self.upscore8(fuse_pool3)
-        upscore8c = upscore8[
-            :, :, 31 : 31 + x.size()[2], 31 : 31 + x.size()[3]
-        ].contiguous()
+        upscore_final = self.upscore_final(fuse_pool3)
+        upscore_finalc = FCN8s.crop(upscore_final, x.size())
 
-        return upscore8c
+        return upscore_finalc
+
+    @staticmethod
+    def crop(input_tensor: torch.Tensor, target_shape: torch.Size) -> torch.Tensor:
+        _, _, input_height, input_width = input_tensor.size()
+        _, _, target_height, target_width = target_shape
+        offset_y = (input_height - target_height) // 2
+        offset_x = (input_width - target_width) // 2
+        return input_tensor[
+            ...,
+            offset_y : offset_y + target_height,
+            offset_x : offset_x + target_width,
+        ]
 
 
 if __name__ == "__main__":
