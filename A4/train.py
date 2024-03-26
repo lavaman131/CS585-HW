@@ -10,7 +10,7 @@ import torch.nn.functional as F
 from torch import nn
 from typing import Tuple
 from pathlib import Path
-from torch.optim import Adam
+from torch.optim import AdamW
 from lightning import seed_everything
 
 seed_everything(42)
@@ -33,7 +33,7 @@ class_dict_path = "class_dict.csv"
 resolution = [384, 512]
 batch_size = 16
 num_epochs = 50
-lr = 1e-3
+lr = 1e-4  # 1e-3
 ignore_index = 30
 
 camvid_dataset_train = fcn_dataset.CamVidDataset(
@@ -111,7 +111,7 @@ def calculate_frequency_weighted_iou(
     return (frequency * iou).sum().item()
 
 
-optimizer = Adam(model.parameters(), lr=lr)
+optimizer = AdamW(model.parameters(), lr=lr)
 
 
 def eval_model(
