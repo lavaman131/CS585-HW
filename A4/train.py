@@ -32,7 +32,7 @@ labels_dir_train = "train_labels/"
 class_dict_path = "class_dict.csv"
 resolution = [384, 512]
 batch_size = 16
-num_epochs = 50
+num_epochs = 200
 lr = 1e-4  # 1e-3
 ignore_index = 30
 
